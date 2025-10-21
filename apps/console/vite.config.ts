@@ -14,6 +14,12 @@ const config = defineConfig({
     tanstackStart(),
     viteReact(),
   ],
+  optimizeDeps: {
+    exclude: ['@google-cloud/cloudbuild', '@google-cloud/storage'],
+  },
+  ssr: {
+    external: ['@google-cloud/cloudbuild', '@google-cloud/storage'],
+  },
 })
 
 export default config
