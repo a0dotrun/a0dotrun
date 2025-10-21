@@ -3,20 +3,30 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { App as GhApp } from "octokit";
 import z from "zod/v4";
-import { db } from "../db";
+import { Database, db } from "../db";
 import { type GitHubAccountType, gitHubInstallationTable } from "../db/schema";
 import { GitHubInstallationSetup } from "../ty";
 import { type ServerReadme } from "../ty";
 
-const ghApp = new GhApp({
-  appId: process.env.A0_GITHUB_APP_ID!,
-  privateKey: Buffer.from(
-    process.env.A0_GITHUB_PRIVATE_KEY_BASE64!,
-    "base64"
-  ).toString("utf8"),
-});
+let ghApp: GhApp | undefined;
+
+function getGhApp() {
+  if (!ghApp) {
+    ghApp = new GhApp({
+      appId: process.env.A0_GITHUB_APP_ID!,
+      privateKey: Buffer.from(
+        process.env.A0_GITHUB_PRIVATE_KEY_BASE64!,
+        "base64"
+      ).toString("utf8"),
+    });
+  }
+  return ghApp;
+}
 
 export namespace GitHub {
+  const withDatabase = <T>(callback: () => Promise<T>) =>
+    Database.use(callback);
+
   export async function installationDetails(githubInstallationId: number) {
     function isUserOrOrg(
       account: any
@@ -24,7 +34,7 @@ export namespace GitHub {
       return account && typeof account.login === "string";
     }
 
-    const response = await ghApp.octokit.rest.apps.getInstallation({
+    const response = await getGhApp().octokit.rest.apps.getInstallation({
       installation_id: githubInstallationId,
     });
 
@@ -48,38 +58,40 @@ export namespace GitHub {
       setupAction: z.string(),
     }),
     async (gh) =>
-      db.transaction(async (tx) => {
-        return tx
-          .insert(gitHubInstallationTable)
-          .values({
-            githubInstallationId: gh.githubInstallationId,
-            githubAppId: gh.githubAppId,
-            accountId: gh.accountId,
-            accountLogin: gh.accountLogin,
-            accountType: gh.accountType as GitHubAccountType,
-            userId: gh.userId,
-            setupAction: gh.setupAction as GitHubInstallationSetup,
-          })
-          .onConflictDoUpdate({
-            target: [
-              gitHubInstallationTable.githubAppId,
-              gitHubInstallationTable.userId,
-              gitHubInstallationTable.accountLogin,
-            ],
-            set: {
-              githubInstallationId: sql`EXCLUDED.github_installation_id`,
-              accountId: sql`EXCLUDED.account_id`,
-              accountType: sql`EXCLUDED.account_type`,
-              setupAction: sql`EXCLUDED.setup_action`,
-              updatedAt: sql`NOW()`,
-            },
-          })
-          .returning({
-            id: gitHubInstallationTable.githubInstallationId,
-          })
-          .execute()
-          .then((row) => row[0]?.id);
-      })
+      withDatabase(() =>
+        db.transaction(async (tx) => {
+          return tx
+            .insert(gitHubInstallationTable)
+            .values({
+              githubInstallationId: gh.githubInstallationId,
+              githubAppId: gh.githubAppId,
+              accountId: gh.accountId,
+              accountLogin: gh.accountLogin,
+              accountType: gh.accountType as GitHubAccountType,
+              userId: gh.userId,
+              setupAction: gh.setupAction as GitHubInstallationSetup,
+            })
+            .onConflictDoUpdate({
+              target: [
+                gitHubInstallationTable.githubAppId,
+                gitHubInstallationTable.userId,
+                gitHubInstallationTable.accountLogin,
+              ],
+              set: {
+                githubInstallationId: sql`EXCLUDED.github_installation_id`,
+                accountId: sql`EXCLUDED.account_id`,
+                accountType: sql`EXCLUDED.account_type`,
+                setupAction: sql`EXCLUDED.setup_action`,
+                updatedAt: sql`NOW()`,
+              },
+            })
+            .returning({
+              id: gitHubInstallationTable.githubInstallationId,
+            })
+            .execute()
+            .then((row) => row[0]?.id);
+        })
+      )
   );
 
   export const userInstallation = fn(
@@ -89,8 +101,38 @@ export namespace GitHub {
       account: z.string(),
     }),
     async (filter) =>
-      db.transaction(async (tx) => {
-        return tx
+      withDatabase(() =>
+        db.transaction(async (tx) => {
+          return tx
+            .select({
+              githubInstallationId:
+                gitHubInstallationTable.githubInstallationId,
+              githubAppId: gitHubInstallationTable.githubAppId,
+              accountLogin: gitHubInstallationTable.accountLogin,
+              accountType: gitHubInstallationTable.accountType,
+              setupAction: gitHubInstallationTable.setupAction,
+              createdAt: gitHubInstallationTable.createdAt,
+              updatedAt: gitHubInstallationTable.updatedAt,
+            })
+            .from(gitHubInstallationTable)
+            .where(
+              and(
+                eq(gitHubInstallationTable.githubAppId, filter.githubAppId),
+                eq(gitHubInstallationTable.userId, filter.userId),
+                eq(gitHubInstallationTable.accountLogin, filter.account)
+              )
+            )
+            .execute()
+            .then((rows) => rows[0]);
+        })
+      )
+  );
+
+  export const userInstalls = fn(
+    z.object({ userId: z.string(), githubAppId: z.number() }),
+    async (filter) =>
+      withDatabase(() =>
+        db
           .select({
             githubInstallationId: gitHubInstallationTable.githubInstallationId,
             githubAppId: gitHubInstallationTable.githubAppId,
@@ -104,41 +146,18 @@ export namespace GitHub {
           .where(
             and(
               eq(gitHubInstallationTable.githubAppId, filter.githubAppId),
-              eq(gitHubInstallationTable.userId, filter.userId),
-              eq(gitHubInstallationTable.accountLogin, filter.account)
+              eq(gitHubInstallationTable.userId, filter.userId)
             )
           )
-          .execute()
-          .then((rows) => rows[0]);
-      })
-  );
-
-  export const userInstalls = fn(
-    z.object({ userId: z.string(), githubAppId: z.number() }),
-    async (filter) =>
-      db
-        .select({
-          githubInstallationId: gitHubInstallationTable.githubInstallationId,
-          githubAppId: gitHubInstallationTable.githubAppId,
-          accountLogin: gitHubInstallationTable.accountLogin,
-          accountType: gitHubInstallationTable.accountType,
-          setupAction: gitHubInstallationTable.setupAction,
-          createdAt: gitHubInstallationTable.createdAt,
-          updatedAt: gitHubInstallationTable.updatedAt,
-        })
-        .from(gitHubInstallationTable)
-        .where(
-          and(
-            eq(gitHubInstallationTable.githubAppId, filter.githubAppId),
-            eq(gitHubInstallationTable.userId, filter.userId)
-          )
-        )
-        .orderBy(asc(gitHubInstallationTable.createdAt))
-        .limit(25)
+          .orderBy(asc(gitHubInstallationTable.createdAt))
+          .limit(25)
+      )
   );
 
   export const repos = fn(z.number(), async (githubInstallationId) => {
-    const octokit = await ghApp.getInstallationOctokit(githubInstallationId);
+    const octokit = await getGhApp().getInstallationOctokit(
+      githubInstallationId
+    );
     const repos = await octokit.paginate(
       octokit.rest.apps.listReposAccessibleToInstallation,
       {
@@ -166,7 +185,7 @@ export namespace GitHub {
       repo: z.string(),
     }),
     async (q) => {
-      const octokit = await ghApp.getInstallationOctokit(
+      const octokit = await getGhApp().getInstallationOctokit(
         q.githubInstallationId
       );
       const { data } = await octokit.rest.repos.get({
@@ -208,7 +227,7 @@ export namespace GitHub {
       name: z.string(),
     }),
     async (repo) => {
-      const octokit = await ghApp.getInstallationOctokit(
+      const octokit = await getGhApp().getInstallationOctokit(
         repo.githubInstallationId
       );
       const { data } = await octokit.rest.repos.getReadme({
@@ -232,7 +251,7 @@ export namespace GitHub {
       branch: z.string(),
     }),
     async (r) => {
-      const octokit = await ghApp.getInstallationOctokit(
+      const octokit = await getGhApp().getInstallationOctokit(
         r.githubInstallationId
       );
 

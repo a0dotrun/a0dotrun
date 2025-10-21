@@ -1,6 +1,6 @@
 import { and, desc, eq, or } from "drizzle-orm";
 import z from "zod/v4";
-import { db } from "../db";
+import { Database, db } from "../db";
 import {
   buildTable,
   InsertDeploymentLog,
@@ -67,6 +67,9 @@ export const DeployJobRequestError = NamedError.create(
   })
 );
 
+const withDatabase = <T>(callback: () => Promise<T>) =>
+  Database.use(callback);
+
 // type DBTx = PgTransaction<
 //   NodePgQueryResultHKT,
 //   Record<string, never>,
@@ -94,27 +97,32 @@ export namespace ServerDeployment {
             )
           : eq(deploymentTable.target, filter.target as DeploymentTargetType);
 
-      return db
-        .select({
-          deploymentId: deploymentTable.deploymentId,
-          username: serverTable.username,
-          name: serverTable.name,
-          title: serverTable.title,
-          avatarUrl: serverTable.avatarUrl,
-          status: deploymentTable.status,
-          imageDigest: buildTable.imageDigest,
-          buildId: buildTable.buildId,
-          createdAt: deploymentTable.createdAt,
-        })
-        .from(deploymentTable)
-        .innerJoin(
-          serverTable,
-          eq(deploymentTable.serverId, serverTable.serverId)
-        )
-        .innerJoin(buildTable, eq(deploymentTable.buildId, buildTable.buildId))
-        .where(and(eq(deploymentTable.userId, filter.userId), condition))
-        .orderBy(desc(deploymentTable.createdAt))
-        .limit(filter.limit);
+      return withDatabase(() =>
+        db
+          .select({
+            deploymentId: deploymentTable.deploymentId,
+            username: serverTable.username,
+            name: serverTable.name,
+            title: serverTable.title,
+            avatarUrl: serverTable.avatarUrl,
+            status: deploymentTable.status,
+            imageDigest: buildTable.imageDigest,
+            buildId: buildTable.buildId,
+            createdAt: deploymentTable.createdAt,
+          })
+          .from(deploymentTable)
+          .innerJoin(
+            serverTable,
+            eq(deploymentTable.serverId, serverTable.serverId)
+          )
+          .innerJoin(
+            buildTable,
+            eq(deploymentTable.buildId, buildTable.buildId)
+          )
+          .where(and(eq(deploymentTable.userId, filter.userId), condition))
+          .orderBy(desc(deploymentTable.createdAt))
+          .limit(filter.limit)
+      );
     }
   );
 
@@ -124,37 +132,42 @@ export namespace ServerDeployment {
       deploymentId: z.string(),
     }),
     async (filter) => {
-      return db
-        .select({
-          deploymentId: deploymentTable.deploymentId,
-          username: serverTable.username,
-          name: serverTable.name,
-          title: serverTable.title,
-          avatarUrl: serverTable.avatarUrl,
-          status: deploymentTable.status,
-          imageDigest: buildTable.imageDigest,
-          buildId: buildTable.buildId,
-          createdAt: deploymentTable.createdAt,
-          githubRepo: buildTable.gitHubRepo,
-          gitHubRef: buildTable.gitHubRef,
-          githubOrg: buildTable.githubOwner,
-          commitHash: buildTable.commitHash,
-          target: deploymentTable.target,
-        })
-        .from(deploymentTable)
-        .innerJoin(
-          serverTable,
-          eq(deploymentTable.serverId, serverTable.serverId)
-        )
-        .innerJoin(buildTable, eq(deploymentTable.buildId, buildTable.buildId))
-        .where(
-          and(
-            eq(deploymentTable.userId, filter.userId),
-            eq(deploymentTable.deploymentId, filter.deploymentId)
+      return withDatabase(() =>
+        db
+          .select({
+            deploymentId: deploymentTable.deploymentId,
+            username: serverTable.username,
+            name: serverTable.name,
+            title: serverTable.title,
+            avatarUrl: serverTable.avatarUrl,
+            status: deploymentTable.status,
+            imageDigest: buildTable.imageDigest,
+            buildId: buildTable.buildId,
+            createdAt: deploymentTable.createdAt,
+            githubRepo: buildTable.gitHubRepo,
+            gitHubRef: buildTable.gitHubRef,
+            githubOrg: buildTable.githubOwner,
+            commitHash: buildTable.commitHash,
+            target: deploymentTable.target,
+          })
+          .from(deploymentTable)
+          .innerJoin(
+            serverTable,
+            eq(deploymentTable.serverId, serverTable.serverId)
           )
-        )
-        .execute()
-        .then((row) => row[0]);
+          .innerJoin(
+            buildTable,
+            eq(deploymentTable.buildId, buildTable.buildId)
+          )
+          .where(
+            and(
+              eq(deploymentTable.userId, filter.userId),
+              eq(deploymentTable.deploymentId, filter.deploymentId)
+            )
+          )
+          .execute()
+          .then((row) => row[0])
+      );
     }
   );
 
@@ -179,43 +192,49 @@ export namespace ServerDeployment {
             )
           : eq(deploymentTable.target, filter.target as DeploymentTargetType);
 
-      return db
-        .select({
-          deploymentId: deploymentTable.deploymentId,
-          username: serverTable.username,
-          name: serverTable.name,
-          title: serverTable.title,
-          avatarUrl: serverTable.avatarUrl,
-          status: deploymentTable.status,
-          imageDigest: buildTable.imageDigest,
-          buildId: buildTable.buildId,
-          createdAt: deploymentTable.createdAt,
-        })
-        .from(deploymentTable)
-        .innerJoin(
-          serverTable,
-          eq(deploymentTable.serverId, serverTable.serverId)
-        )
-        .innerJoin(buildTable, eq(deploymentTable.buildId, buildTable.buildId))
-        .where(
-          and(
-            eq(deploymentTable.userId, filter.userId),
-            eq(deploymentTable.serverId, filter.serverId),
-            condition
+      return withDatabase(() =>
+        db
+          .select({
+            deploymentId: deploymentTable.deploymentId,
+            username: serverTable.username,
+            name: serverTable.name,
+            title: serverTable.title,
+            avatarUrl: serverTable.avatarUrl,
+            status: deploymentTable.status,
+            imageDigest: buildTable.imageDigest,
+            buildId: buildTable.buildId,
+            createdAt: deploymentTable.createdAt,
+          })
+          .from(deploymentTable)
+          .innerJoin(
+            serverTable,
+            eq(deploymentTable.serverId, serverTable.serverId)
           )
-        )
-        .orderBy(desc(deploymentTable.createdAt))
-        .limit(filter.limit);
+          .innerJoin(
+            buildTable,
+            eq(deploymentTable.buildId, buildTable.buildId)
+          )
+          .where(
+            and(
+              eq(deploymentTable.userId, filter.userId),
+              eq(deploymentTable.serverId, filter.serverId),
+              condition
+            )
+          )
+          .orderBy(desc(deploymentTable.createdAt))
+          .limit(filter.limit)
+      );
     }
   );
 
   export const triggerGitHubBuildDeploy = fn(
     DeployWithGitHubRequest,
     async (deploy) => {
-      return db.transaction(async (tx) => {
-        const installedServer = await tx
-          .select()
-          .from(serverInstallTable)
+      return withDatabase(() =>
+        db.transaction(async (tx) => {
+          const installedServer = await tx
+            .select()
+            .from(serverInstallTable)
           .where(
             and(
               eq(serverInstallTable.userId, deploy.user.userId),
@@ -389,17 +408,19 @@ export namespace ServerDeployment {
           buildId: newBuild.buildId,
           revisionId: revision.revisionId,
         };
-      });
+        })
+      );
     }
   );
 
   export const updateBuildDeploy = fn(
     UpdateBuildDeploy.extend({ buildId: z.string(), deploymentId: z.string() }),
     async (updates) => {
-      return db.transaction(async (tx) => {
-        await tx
-          .update(buildTable)
-          .set({
+      return withDatabase(() =>
+        db.transaction(async (tx) => {
+          await tx
+            .update(buildTable)
+            .set({
             imageRef: updates.build.imageRef,
             imageDigest: updates.build.imageDigest,
             builtAt: updates.build.builtAt,
@@ -410,73 +431,80 @@ export namespace ServerDeployment {
           .execute()
           .then((row) => row[0]);
 
-        await tx
-          .update(deploymentTable)
-          .set({
-            status: updates.deployment.status,
-          })
-          .where(eq(deploymentTable.deploymentId, updates.deploymentId))
-          .returning()
-          .execute()
-          .then((row) => row[0]);
-      });
+          await tx
+            .update(deploymentTable)
+            .set({
+              status: updates.deployment.status,
+            })
+            .where(eq(deploymentTable.deploymentId, updates.deploymentId))
+            .returning()
+            .execute()
+            .then((row) => row[0]);
+        })
+      );
     }
   );
 
   export const updateBuild = fn(
     UpdateBuild.extend({ buildId: z.string() }),
     async (updates) => {
-      return db.transaction(async (tx) => {
-        await tx
-          .update(buildTable)
-          .set({
+      return withDatabase(() =>
+        db.transaction(async (tx) => {
+          await tx
+            .update(buildTable)
+            .set({
             imageRef: updates.imageRef,
             imageDigest: updates.imageDigest,
             builtAt: updates.builtAt,
             status: updates.status,
           })
-          .where(eq(buildTable.buildId, updates.buildId))
-          .returning()
-          .execute()
-          .then((row) => row[0]);
-      });
+            .where(eq(buildTable.buildId, updates.buildId))
+            .returning()
+            .execute()
+            .then((row) => row[0]);
+        })
+      );
     }
   );
 
   export const updateDeploy = fn(
     UpdateDeployment.extend({ deploymentId: z.string() }),
     async (updates) => {
-      return db.transaction(async (tx) => {
-        await tx
-          .update(deploymentTable)
-          .set({
-            status: updates.status,
-          })
-          .where(eq(deploymentTable.deploymentId, updates.deploymentId))
-          .returning()
-          .execute()
-          .then((row) => row[0]);
-      });
+      return withDatabase(() =>
+        db.transaction(async (tx) => {
+          await tx
+            .update(deploymentTable)
+            .set({
+              status: updates.status,
+            })
+            .where(eq(deploymentTable.deploymentId, updates.deploymentId))
+            .returning()
+            .execute()
+            .then((row) => row[0]);
+        })
+      );
     }
   );
 
   export const ingestLog = fn(
     InsertDeploymentLog,
     async (log) =>
-      await db
-        .insert(deploymentLogTable)
-        .values(log)
-        .onConflictDoUpdate({
-          target: deploymentLogTable.logId,
-          set: {
-            message: log.message,
-            timestamp: log.timestamp,
-            level: log.level,
-          },
-        })
-        .returning({ logId: deploymentLogTable.logId })
-        .execute()
-        .then((row) => row[0])
+      withDatabase(() =>
+        db
+          .insert(deploymentLogTable)
+          .values(log)
+          .onConflictDoUpdate({
+            target: deploymentLogTable.logId,
+            set: {
+              message: log.message,
+              timestamp: log.timestamp,
+              level: log.level,
+            },
+          })
+          .returning({ logId: deploymentLogTable.logId })
+          .execute()
+          .then((row) => row[0])
+      )
   );
 }
 
