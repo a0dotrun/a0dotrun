@@ -1,15 +1,24 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import "dotenv/config";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 
-const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
-});
+const connectionString = process.env.DATABASE_URL!;
 
-export type DrizzleDB = typeof db;
+export const client = postgres(connectionString, { prepare: false });
+export const db = drizzle({ client, casing: "snake_case" });
 
-const db = drizzle({ client: pool, casing: "snake_case" });
+// import { drizzle } from "drizzle-orm/node-postgres";
+// import { Pool } from "pg";
 
-export { db };
+// const pool = new Pool({
+//   connectionString: process.env.DATABASE_URL,
+// });
+
+// export type DrizzleDB = typeof db;
+
+// const db = drizzle({ client: pool, casing: "snake_case" });
+
+// export { db };
 
 // import { drizzle } from "drizzle-orm/neon-http";
 

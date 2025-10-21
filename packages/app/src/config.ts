@@ -7,9 +7,6 @@ export const A0_GITHUB_APP_ID = process.env.A0_GITHUB_APP_ID
   ? parseInt(process.env.A0_GITHUB_APP_ID)
   : 0;
 
-export const A0_SHARED_SECRET_KEY =
-  process.env.A0_SHARED_SECRET_KEY || "VeryS3cure";
-
 export const A0_ELECTRIC_SYNC_BASEURL =
   process.env.A0_ELECTRIC_SYNC_BASEURL || "http://localhost:8081";
 
@@ -29,10 +26,6 @@ export const a0GitHubAppID = () => {
   return process.env.A0_GITHUB_APP_ID
     ? parseInt(process.env.A0_GITHUB_APP_ID)
     : 0;
-};
-
-export const a0SharedSecretKey = () => {
-  return process.env.A0_SHARED_SECRET_KEY || "VeryS3cure";
 };
 
 export const a0APICallbackBaseUrl = () => {

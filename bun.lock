@@ -4,11 +4,8 @@
     "": {
       "name": "a0dotrun",
       "dependencies": {
-        "@neondatabase/serverless": "^1.0.2",
         "@octokit/rest": "^22.0.0",
         "@resonatehq/sdk": "^0.8.3",
-        "@restatedev/restate-sdk": "^1.9.0",
-        "@restatedev/restate-sdk-clients": "^1.9.0",
         "better-auth": "^1.3.27",
         "dotenv": "^17.2.3",
         "drizzle-orm": "^0.44.6",
@@ -18,6 +15,7 @@
         "octokit": "^5.0.3",
         "pg": "^8.16.3",
         "pino": "^10.0.0",
+        "postgres": "^3.4.7",
         "ulid": "^3.0.1",
         "zod": "^4.1.12",
       },
@@ -175,17 +173,16 @@
         "@google-cloud/logging": "^11.2.0",
         "@octokit/rest": "catalog:",
         "@resonatehq/sdk": "catalog:",
-        "@restatedev/restate-sdk": "catalog:",
-        "@restatedev/restate-sdk-clients": "catalog:",
         "better-auth": "catalog:",
-        "drizzle-kit": "catalog:",
+        "drizzle-kit": "^0.31.5",
         "drizzle-orm": "catalog:",
         "drizzle-zod": "catalog:",
         "google-gax": "^5.0.4",
         "jose": "catalog:",
         "octokit": "catalog:",
         "pg": "catalog:",
-        "tsx": "catalog:",
+        "postgres": "catalog:",
+        "tsx": "^4.20.6",
         "ulid": "catalog:",
         "zod": "catalog:",
       },
@@ -206,11 +203,8 @@
     },
   },
   "catalog": {
-    "@neondatabase/serverless": "^1.0.2",
     "@octokit/rest": "^22.0.0",
     "@resonatehq/sdk": "^0.8.3",
-    "@restatedev/restate-sdk": "^1.9.0",
-    "@restatedev/restate-sdk-clients": "^1.9.0",
     "@types/bun": "^1.3.0",
     "@types/node": "^24.7.2",
     "better-auth": "^1.3.27",
@@ -224,6 +218,7 @@
     "pg": "^8.16.3",
     "pino": "^10.0.0",
     "pino-pretty": "^13.1.2",
+    "postgres": "^3.4.7",
     "tsx": "^4.20.6",
     "ulid": "^3.0.1",
     "zod": "^4.1.12",
@@ -860,12 +855,6 @@
     "@radix-ui/rect": ["@radix-ui/rect@1.1.1", "", {}, "sha512-HPwpGIzkl28mWyZqG52jiqDJ12waP11Pa1lGoiyUkIEuMLBP0oeK/C89esbXrxsky5we7dfd8U58nm0SgAWpVw=="],
 
     "@resonatehq/sdk": ["@resonatehq/sdk@0.8.3", "", { "dependencies": { "cron-parser": "^5.3.0", "eventsource": "^4.0.0" } }, "sha512-Q9C3PEU78yc4DWwS6aRU3zGPKAGHmuvi+K9Z1rTdhMZ/G9ZodtkBy6zX0zTFdGLjTXSfoRL4E3TRjvz45MMpag=="],
-
-    "@restatedev/restate-sdk": ["@restatedev/restate-sdk@1.9.0", "", { "dependencies": { "@restatedev/restate-sdk-core": "^1.9.0" } }, "sha512-PSvFpiD7qGN1DVBWuFHR4x5j8Mk6rAl5r75/XUAfW/YN/YchuTK4jIO4nqBLvbJ4dzioDlFbLmLZprKBVfX2tA=="],
-
-    "@restatedev/restate-sdk-clients": ["@restatedev/restate-sdk-clients@1.9.0", "", { "dependencies": { "@restatedev/restate-sdk-core": "^1.9.0" } }, "sha512-vgKlDXQ4fkR9EU+MF/37edxmrLfFlGlorXsbumhkriGgBVimTKigdl/sdSphcAqdnPIq/tBd3H18Qj83uxKezQ=="],
-
-    "@restatedev/restate-sdk-core": ["@restatedev/restate-sdk-core@1.9.0", "", {}, "sha512-q3S7hnxcP3zU8cDcaAkYmO50zT8dykzaBm65D+hyJgba74gs/h5HMjbS8gbZgRezbJHtRrRsJmnNFet/qCj4pQ=="],
 
     "@rolldown/pluginutils": ["@rolldown/pluginutils@1.0.0-beta.38", "", {}, "sha512-N/ICGKleNhA5nc9XXQG/kkKHJ7S55u0x0XUJbbkmdCnFuoRkM1Il12q9q0eX19+M7KKUEPw/daUPIRnxhcxAIw=="],
 
@@ -2393,6 +2382,8 @@
 
     "postcss-selector-parser": ["postcss-selector-parser@6.0.10", "", { "dependencies": { "cssesc": "^3.0.0", "util-deprecate": "^1.0.2" } }, "sha512-IQ7TZdoaqbT+LCpShg46jnZVlhWD2w6iQYAcYXfHARZ7X1t/UGhhceQDs5X0cGqKvYlHNOuv7Oa1xmb0oQuA3w=="],
 
+    "postgres": ["postgres@3.4.7", "", {}, "sha512-Jtc2612XINuBjIl/QTWsV5UvE8UHuNblcO3vVADSrKsrc6RqGX6lOW1cEo3CM2v0XG4Nat8nI+YM7/f26VxXLw=="],
+
     "postgres-array": ["postgres-array@2.0.0", "", {}, "sha512-VpZrUqU5A69eQyW2c5CA1jtLecCsN2U/bD6VilrFDWq5+5UIEVO7nazS3TEcHf1zuPYO/sqGvUvW62g86RXZuA=="],
 
     "postgres-bytea": ["postgres-bytea@1.0.0", "", {}, "sha512-xy3pmLuQqRBZBXDULy7KbaitYqLcmxigw14Q5sj8QBVLqEwXfeybIKVWiqAXTlcvdvb0+xkOtDbfQMOf4lST1w=="],
@@ -2913,6 +2904,8 @@
 
     "zwitch": ["zwitch@2.0.4", "", {}, "sha512-bXE4cR/kVZhKZX/RjPEflHaKVhUVl85noU3v6b8apfQEc1x4A+zBxjZ4lN8LqGd6WZ3dl98pY4o717VFmoPp+A=="],
 
+    "@a0dotrun/api/better-auth": ["better-auth@1.3.28", "", { "dependencies": { "@better-auth/core": "1.3.28", "@better-auth/telemetry": "1.3.28", "@better-auth/utils": "0.3.0", "@better-fetch/fetch": "1.1.18", "@noble/ciphers": "^2.0.0", "@noble/hashes": "^2.0.0", "@simplewebauthn/browser": "^13.1.2", "@simplewebauthn/server": "^13.1.2", "better-call": "1.0.19", "defu": "^6.1.4", "jose": "^6.1.0", "kysely": "^0.28.5", "nanostores": "^1.0.1", "zod": "^4.1.5" } }, "sha512-fSaeRsTSkzCSSKREFsm7z7TsTMC8ghGrwCN+mumxCZiyc8Fh/UThUwURlTJmsR0YVB0DMR8ejQH+c38WhdQslQ=="],
+
     "@a0dotrun/app/better-auth": ["better-auth@1.3.28", "", { "dependencies": { "@better-auth/core": "1.3.28", "@better-auth/telemetry": "1.3.28", "@better-auth/utils": "0.3.0", "@better-fetch/fetch": "1.1.18", "@noble/ciphers": "^2.0.0", "@noble/hashes": "^2.0.0", "@simplewebauthn/browser": "^13.1.2", "@simplewebauthn/server": "^13.1.2", "better-call": "1.0.19", "defu": "^6.1.4", "jose": "^6.1.0", "kysely": "^0.28.5", "nanostores": "^1.0.1", "zod": "^4.1.5" } }, "sha512-fSaeRsTSkzCSSKREFsm7z7TsTMC8ghGrwCN+mumxCZiyc8Fh/UThUwURlTJmsR0YVB0DMR8ejQH+c38WhdQslQ=="],
 
     "@asamuzakjp/css-color/lru-cache": ["lru-cache@11.2.2", "", {}, "sha512-F9ODfyqML2coTIsQpSkRHnLSZMtkU8Q+mSfcaIyKwy58u+8k5nvAYeiNhsyMARvzNcXJ9QfWVrcPsC9e9rAxtg=="],
@@ -3196,6 +3189,8 @@
     "xmlbuilder2/js-yaml": ["js-yaml@3.14.1", "", { "dependencies": { "argparse": "^1.0.7", "esprima": "^4.0.0" }, "bin": { "js-yaml": "bin/js-yaml.js" } }, "sha512-okMH7OXXJ7YrN9Ok3/SXrnu4iX9yOk+25nqX4imS2npuvTYDmo/QEZoqwZkYaIDk3jVvBOTOIEgEhaLOynBS9g=="],
 
     "yargs/string-width": ["string-width@4.2.3", "", { "dependencies": { "emoji-regex": "^8.0.0", "is-fullwidth-code-point": "^3.0.0", "strip-ansi": "^6.0.1" } }, "sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g=="],
+
+    "@a0dotrun/api/better-auth/@better-auth/core": ["@better-auth/core@1.3.28", "", { "dependencies": { "zod": "^4.1.5" }, "peerDependencies": { "@better-auth/utils": "0.3.0", "@better-fetch/fetch": "1.1.18", "better-call": "1.0.19", "better-sqlite3": "^12.4.1", "jose": "^6.1.0", "kysely": "^0.28.5", "nanostores": "^1.0.1" } }, "sha512-iZOGKlXaNEIEj0Q3z7+REE94I89YUJ0sel/1pvm1qqdHkm59G+ToTysHtyTcLYby3+UtAeJRKyFAY0nwJH0H7A=="],
 
     "@a0dotrun/app/better-auth/@better-auth/core": ["@better-auth/core@1.3.28", "", { "dependencies": { "zod": "^4.1.5" }, "peerDependencies": { "@better-auth/utils": "0.3.0", "@better-fetch/fetch": "1.1.18", "better-call": "1.0.19", "better-sqlite3": "^12.4.1", "jose": "^6.1.0", "kysely": "^0.28.5", "nanostores": "^1.0.1" } }, "sha512-iZOGKlXaNEIEj0Q3z7+REE94I89YUJ0sel/1pvm1qqdHkm59G+ToTysHtyTcLYby3+UtAeJRKyFAY0nwJH0H7A=="],
 
