@@ -4,7 +4,6 @@ import { GitHubSourceBuilder, GitHubSourceDeployer } from "../../ty";
 import { gcpCloudBuildConfigSchema, gcpConfigSchema } from "./config";
 import { CloudBuildClient, protos } from "@google-cloud/cloudbuild";
 import { NamedError } from "@a0dotrun/utils";
-import type { Logger } from "@a0dotrun/utils";
 import z from "zod/v4";
 import { CloudBuildStatus, CloudBuildStatusEnum } from "./ty";
 import { Buffer } from "node:buffer";
@@ -44,9 +43,9 @@ export type CloudBuildLogEvent =
 export const CloudBuildBuild = Builder.define("gcp_cb_build", {
   parameters: GitHubSourceBuilder,
   async build(params, ctx) {
-    ctx.logger.info("Starting GCP Cloud Build...");
-    ctx.logger.info(ctx);
-    ctx.logger.info(params);
+    console.info("Starting GCP Cloud Build...");
+    console.info(ctx);
+    console.info(params);
     return {
       status: "success" as const,
       taskId: "jobId-123",
@@ -61,8 +60,7 @@ export const CloudBuildBuildNDeploy = Deployer.define(
   async () => ({
     parameters: GitHubSourceDeployer,
     async deploy(params, ctx): Promise<Deployer.Result> {
-      const logger: Logger = ctx.logger;
-      logger.info(
+      console.info(
         {
           deploymentId: params.deployment.deploymentId,
           buildId: params.build.buildId,
@@ -201,7 +199,7 @@ export const CloudBuildBuildNDeploy = Deployer.define(
       };
 
       if (ctx.dryRun) {
-        logger.info(
+        console.info(
           {
             imageName,
             repoUrl,
@@ -247,7 +245,7 @@ export const CloudBuildBuildNDeploy = Deployer.define(
           };
         }
 
-        logger.info(
+        console.info(
           { operationName, cbBuildStatus: cbBuildStatus, cbBuildID: cbBuildID },
           "Submitted Cloud Build; not monitoring (fire-and-forget)."
         );
@@ -267,7 +265,7 @@ export const CloudBuildBuildNDeploy = Deployer.define(
         };
       } catch (error: unknown) {
         const err = toError(error);
-        logger.error({ err }, "Failed to submit GCP Cloud Build deployment");
+        console.error({ err }, "Failed to submit GCP Cloud Build deployment");
         throw new CloudBuildTriggerError({ message: err.message });
       } finally {
         await cloudBuildClient.close().catch(() => undefined);
@@ -353,7 +351,7 @@ function normalizeBuildId(raw?: string | null): string | null {
   if (!trimmed) return null;
 
   const segment = trimmed.includes("/")
-    ? (trimmed.split("/").filter(Boolean).pop() ?? trimmed)
+    ? trimmed.split("/").filter(Boolean).pop() ?? trimmed
     : trimmed;
 
   if (looksLikeUuid(segment)) {

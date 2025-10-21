@@ -31,7 +31,6 @@
     "postgres": "catalog:"
   },
   "devDependencies": {
-    "pino-pretty": "catalog:",
     "@types/node": "catalog:"
   }
 }

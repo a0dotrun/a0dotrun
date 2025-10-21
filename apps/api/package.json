@@ -20,8 +20,6 @@
     "better-auth": "catalog:",
     "dotenv": "catalog:",
     "jose": "catalog:",
-    "pino": "catalog:",
-    "pino-pretty": "catalog:",
     "ulid": "catalog:",
     "zod": "catalog:"
   },

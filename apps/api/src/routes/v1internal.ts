@@ -5,7 +5,6 @@ import { Hono } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
 import { ErrorCode } from "./errors";
-import { type Logger, loggerPromise } from "@a0dotrun/utils";
 import {
   type CloudBuildStatus,
   CloudBuildStatusEnum,
@@ -17,7 +16,6 @@ import { DeploymentStatusEnum } from "@a0dotrun/app/ty";
 
 const app = new Hono();
 
-const logger = (await loggerPromise) as Logger;
 
 const internalWebhookUsername =
   process.env.A0_INTERNAL_WEBHOOK_USERNAME || "a0runner";
@@ -44,12 +42,12 @@ app.post(
 
     const tags: string[] = body?.build?.tags || [];
 
-    logger.info(
+    console.info(
       `Received Event ID: ${eventId ?? "unknown"} for build ID: ${cbBuildID ?? "unknown"}`
     );
 
     if (!eventId && !cbBuildID) {
-      logger.warn(`Ignoring event has missing identifiers`);
+      console.warn(`Ignoring event has missing identifiers`);
       return c.json({ ok: false }, 200);
     }
 
@@ -60,7 +58,7 @@ app.post(
         tag === "ty-build-n-deploy" || tag === "ty-deploy" || tag === "ty-build"
     );
     if (!deploymentTag || !buildTag || !cbType) {
-      logger.warn(
+      console.warn(
         `Ignoring event has missing tag(s) 'deployment-id-*', 'build-id-*' or 'ty-*' is not set or not available`
       );
       return c.json({ ok: false }, 200);
@@ -71,7 +69,7 @@ app.post(
     const status = toDeploymentStatusEnum(cbStatus);
     if (cbType === "ty-build-n-deploy") {
       const isTerminal = isTerminalStatus(cbStatus);
-      logger.info(
+      console.info(
         `Updating DeploymentID: ${deploymentId} BuildID: ${buildId} Status: ${status}`
       );
 

@@ -10,7 +10,6 @@ import {
   type CloudBuildLogEvent,
   type CloudBuildLogStreamOptions,
 } from "@a0dotrun/app/infra/providers/gcp";
-import { loggerPromise, type Logger } from "@a0dotrun/utils";
 
 const resonate = Resonate.remote({
   group: "workers",
@@ -19,12 +18,11 @@ const resonate = Resonate.remote({
 export async function gcpCBBuild(ctx: Context, args: GitHubSourceBuilder) {
   const buildId = args.build.buildId;
   const builder = await CloudBuildBuild.init();
-  const logger = (await loggerPromise) as Logger;
 
-  logger.info(`[ID: ${ctx.id} Build: ${buildId}] Starting build...`);
-  const result = await builder.build(args, { logger });
-  logger.info(`[Build: ${buildId}] Done build...`);
-  logger.info(`[Build: ${buildId}] Result: ${result}`);
+  console.info(`[ID: ${ctx.id} Build: ${buildId}] Starting build...`);
+  const result = await builder.build(args, {});
+  console.info(`[Build: ${buildId}] Done build...`);
+  console.info(`[Build: ${buildId}] Result: ${result}`);
 
   return result;
 }
@@ -41,10 +39,9 @@ export async function gcpBuildNDeploy(
       options: CloudBuildLogStreamOptions
     ) => AsyncGenerator<CloudBuildLogEvent>;
   };
-  const logger = (await loggerPromise) as Logger;
 
-  logger.info(`ID: ${ctx.id} [Deployment: ${deploymentId}] Starting build...`);
-  const result = await deployer.deploy(args, { logger });
+  console.info(`ID: ${ctx.id} [Deployment: ${deploymentId}] Starting build...`);
+  const result = await deployer.deploy(args, {});
 
   const cbBuildID =
     (typeof result.resourceIds?.cbBuildID === "string"
@@ -55,15 +52,17 @@ export async function gcpBuildNDeploy(
       : undefined);
 
   if (!cbBuildID) {
-    logger.warn(`[Deployment: ${deploymentId}] Failed to fetch Cloud Build ID`);
+    console.warn(
+      `[Deployment: ${deploymentId}] Failed to fetch Cloud Build ID`
+    );
     return result;
   }
 
-  logger.info(`[Deployment: ${deploymentId}] Status: ${result.status}`);
-  logger.info(
+  console.info(`[Deployment: ${deploymentId}] Status: ${result.status}`);
+  console.info(
     `[Deployment: ${deploymentId}] Triggered Cloud Build with Cloud Build ID: ${cbBuildID}`
   );
-  logger.info(`[Deployment: ${deploymentId}] Scheduled build N Deploy...`);
+  console.info(`[Deployment: ${deploymentId}] Scheduled build N Deploy...`);
 
   return result;
 }

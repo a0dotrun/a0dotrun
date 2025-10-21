@@ -17,8 +17,6 @@
   },
   "dependencies": {
     "jose": "catalog:",
-    "pino-pretty": "catalog:",
-    "pino": "catalog:",
     "zod": "catalog:",
     "nanoid": "catalog:"
   }

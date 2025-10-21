@@ -27,10 +27,10 @@ import {
 import { UpdateBuildDeploy } from "../db/schema";
 import { GitHubSourceDeployer } from "../infra/ty";
 import { fn, NamedError } from "@a0dotrun/utils";
-import { getResonateClient } from "../lib/rsc";
-import { CloudBuildBuildNDeploy } from "../infra/providers/gcp";
+// import { getResonateClient } from "../lib/rsc";
+// import { CloudBuildBuildNDeploy } from "../infra/providers/gcp";
 
-const rsc = getResonateClient();
+// const rsc = getResonateClient();
 
 export const ServerInstallError = NamedError.create(
   "ServerInstallError",
@@ -375,14 +375,14 @@ export namespace ServerDeployment {
         // }
         //
 
-        await rsc.beginRpc(
-          deployment.deploymentId,
-          CloudBuildBuildNDeploy.id,
-          { ...requestParsed.data },
-          rsc.options({
-            target: "poll://any@workers",
-          })
-        );
+        // await rsc.beginRpc(
+        //   deployment.deploymentId,
+        //   CloudBuildBuildNDeploy.id,
+        //   { ...requestParsed.data },
+        //   rsc.options({
+        //     target: "poll://any@workers",
+        //   })
+        // );
 
         return {
           deploymentId: deployment.deploymentId,

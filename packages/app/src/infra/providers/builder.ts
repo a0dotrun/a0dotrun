@@ -1,5 +1,4 @@
 import z from "zod/v4";
-import type { Logger } from "@a0dotrun/utils";
 
 export namespace Builder {
   export interface Metadata {
@@ -7,7 +6,6 @@ export namespace Builder {
   }
 
   export type Context<M extends Metadata = Metadata> = {
-    logger: Logger;
     metadata?: M;
   };
 
@@ -20,7 +18,7 @@ export namespace Builder {
 
   export interface Info<
     Parameters extends z.ZodType = z.ZodType,
-    M extends Metadata = Metadata,
+    M extends Metadata = Metadata
   > {
     id: string; // e.g., "docker", "gcp-cloud-run"
     init: () => Promise<{
