@@ -1,0 +1,25 @@
+{
+  "name": "@a0dotrun/utils",
+  "type": "module",
+  "scripts": {
+    "dev": "tsc --watch",
+    "build": "tsc"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./github": {
+      "types": "./src/github.ts",
+      "default": "./src/github.ts"
+    }
+  },
+  "dependencies": {
+    "jose": "catalog:",
+    "pino-pretty": "catalog:",
+    "pino": "catalog:",
+    "zod": "catalog:",
+    "nanoid": "catalog:"
+  }
+}

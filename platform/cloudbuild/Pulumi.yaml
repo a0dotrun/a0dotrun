@@ -1,0 +1,7 @@
+name: cloudbuild-event-func
+runtime:
+  name: nodejs
+  options:
+    typescript: true
+main: ./setup.ts
+description: GCP infrastructure for forwarding Cloud Build events with Bun-assisted transpilation.

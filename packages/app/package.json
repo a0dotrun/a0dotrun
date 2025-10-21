@@ -1,0 +1,39 @@
+{
+  "name": "@a0dotrun/app",
+  "type": "module",
+  "version": "0.0.0",
+  "exports": {
+    ".": "./src/index.ts",
+    "./ty": "./src/ty/index.ts",
+    "./auth": "./src/lib/auth.ts",
+    "./config": "./src/config.ts",
+    "./db": "./src/db/index.ts",
+    "./db/schema": "./src/db/schema/index.ts",
+    "./infra": "./src/infra/index.ts",
+    "./infra/providers/gcp": "./src/infra/providers/gcp/index.ts"
+  },
+  "dependencies": {
+    "@a0dotrun/utils": "workspace:*",
+    "@google-cloud/cloudbuild": "^5.3.0",
+    "@google-cloud/logging": "^11.2.0",
+    "@octokit/rest": "catalog:",
+    "@restatedev/restate-sdk": "catalog:",
+    "@restatedev/restate-sdk-clients": "catalog:",
+    "better-auth": "catalog:",
+    "drizzle-kit": "catalog:",
+    "drizzle-orm": "catalog:",
+    "drizzle-zod": "catalog:",
+    "pg": "catalog:",
+    "google-gax": "^5.0.4",
+    "jose": "catalog:",
+    "octokit": "catalog:",
+    "tsx": "catalog:",
+    "ulid": "catalog:",
+    "zod": "catalog:",
+    "@resonatehq/sdk": "catalog:"
+  },
+  "devDependencies": {
+    "pino-pretty": "catalog:",
+    "@types/node": "catalog:"
+  }
+}

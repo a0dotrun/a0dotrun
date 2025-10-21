@@ -1,0 +1,24 @@
+{
+  "name": "@a0dotrun/worker",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "bunx vite build",
+    "dev": "bun run --watch src/main.ts",
+    "start": "bun run src/main.ts",
+    "start:prod": "bun run dist/main.js",
+    "test": "bunx jest --detectOpenHandles",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@a0dotrun/app": "workspace:*",
+    "@a0dotrun/utils": "workspace:*",
+    "zod": "catalog:",
+    "@resonatehq/sdk": "catalog:"
+  },
+  "devDependencies": {
+    "@types/bun": "catalog:",
+    "vite": "^7.1.7"
+  }
+}

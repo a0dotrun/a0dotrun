@@ -1,0 +1,13 @@
+steps:
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      [
+        "build",
+        "-f",
+        "gcp.gcloud.Dockerfile",
+        "-t",
+        "gcr.io/$PROJECT_ID/cbuilder-gcloud",
+        ".",
+      ]
+images:
+  - "gcr.io/$PROJECT_ID/cbuilder-gcloud"
