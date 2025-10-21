@@ -12,3 +12,4 @@ dist-ssr
 .wrangler
 *.local
 wrangler.jsonc
+.dev.vars
