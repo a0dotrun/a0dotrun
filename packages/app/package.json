@@ -5,7 +5,6 @@
   "exports": {
     ".": "./src/index.ts",
     "./ty": "./src/ty/index.ts",
-    "./auth": "./src/lib/auth.ts",
     "./config": "./src/config.ts",
     "./db": "./src/db/index.ts",
     "./db/schema": "./src/db/schema/index.ts",
