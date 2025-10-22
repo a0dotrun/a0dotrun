@@ -168,7 +168,7 @@ function RouteComponent() {
                 exact: true,
                 params: { username, owner, name },
               },
-            ].map(({ to, name, exact, params }) => (
+            ].map(({ to, name: label, exact, params }) => (
               <NavigationMenuItem key={to}>
                 <NavigationMenuLink asChild>
                   <Link
@@ -185,7 +185,7 @@ function RouteComponent() {
                         'px-3 py-2 text-sm font-medium rounded-md transition-colors hover:bg-accent focus:bg-accent focus:outline-none whitespace-nowrap relative text-muted-foreground hover:text-foreground',
                     }}
                   >
-                    {name}
+                    {label}
                   </Link>
                 </NavigationMenuLink>
               </NavigationMenuItem>

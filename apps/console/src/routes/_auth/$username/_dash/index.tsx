@@ -59,7 +59,7 @@ function RouteComponent() {
         <div className="flex flex-col md:flex-row gap-6">
           <div className="w-full md:w-3/4 lg:w-3/5">
             <div className="flex flex-col space-y-4">
-              {deployments && deployments.length > 0 ? (
+              {deployments.length > 0 ? (
                 <div className="flex flex-col space-y-4">
                   <h2 className="text-sm mb-4 font-semibold">
                     Recent Deployments

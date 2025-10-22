@@ -2,89 +2,128 @@ import "dotenv/config";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
+import type {
+  PostgresJsDatabase,
+  PostgresJsPreparedQuery,
+  PostgresJsQueryResultHKT,
+} from "drizzle-orm/postgres-js";
+import { PgTransaction, type PgTransactionConfig } from "drizzle-orm/pg-core";
+import type { ExtractTablesWithRelations } from "drizzle-orm";
 
-const connectionString = process.env.DATABASE_URL!;
+function memo<T>(fn: () => T, cleanup?: (value: T) => Promise<void>) {
+  let value: T | undefined;
+  let loaded = false;
 
-type PostgresClient = ReturnType<typeof postgres>;
-export type DrizzleDatabase = ReturnType<typeof drizzle>;
+  const getter = (): T => {
+    if (loaded) return value as T;
+    value = fn();
+    loaded = true;
+    return value as T;
+  };
 
-interface DatabaseContext {
-  client: PostgresClient;
-  db: DrizzleDatabase;
+  getter.reset = async () => {
+    if (cleanup && value) await cleanup(value);
+    loaded = false;
+    value = undefined;
+  };
+
+  return getter;
 }
 
-const storage = new AsyncLocalStorage<DatabaseContext>();
+namespace Context {
+  export class NotFound extends Error {}
 
-function createContext(): DatabaseContext {
-  const client = postgres(connectionString, { prepare: false });
-  const db = drizzle({ client, casing: "snake_case" });
-  return { client, db };
-}
-
-async function runWithContext<T>(callback: () => Promise<T>): Promise<T> {
-  const existing = storage.getStore();
-  if (existing) {
-    return callback();
-  }
-
-  const context = createContext();
-  try {
-    return await storage.run(context, callback);
-  } finally {
-    await context.client.end({ timeout: 0 }).catch(() => undefined);
+  export function create<T>() {
+    const storage = new AsyncLocalStorage<T>();
+    return {
+      use() {
+        const result = storage.getStore();
+        if (!result) throw new NotFound();
+        return result;
+      },
+      provide<R>(value: T, fn: () => R) {
+        return storage.run<R>(value, fn);
+      },
+    };
   }
 }
 
 export namespace Database {
-  export async function use<T>(callback: (db: DrizzleDatabase) => Promise<T>) {
-    return runWithContext(() => callback(get()));
+  export type Transaction = PgTransaction<
+    PostgresJsQueryResultHKT,
+    Record<string, never>,
+    ExtractTablesWithRelations<Record<string, never>>
+  >;
+
+  const connectionString = process.env.DATABASE_URL!;
+  const client = memo(() => {
+    const result = postgres(connectionString);
+    const db = drizzle(result, { casing: "snake_case" });
+    return db;
+  });
+
+  export type TxOrDb = Transaction | ReturnType<typeof client>;
+
+  const TransactionContext = Context.create<{
+    tx: TxOrDb;
+    effects: (() => void | Promise<void>)[];
+  }>();
+
+  export async function use<T>(callback: (trx: TxOrDb) => Promise<T>) {
+    try {
+      const { tx } = TransactionContext.use();
+      return tx.transaction(callback);
+    } catch (err) {
+      if (err instanceof Context.NotFound) {
+        const effects: (() => void | Promise<void>)[] = [];
+        const result = await TransactionContext.provide(
+          {
+            effects,
+            tx: client(),
+          },
+          () => callback(client())
+        );
+        await Promise.all(effects.map((x) => x()));
+        return result;
+      }
+      throw err;
+    }
+  }
+
+  export async function fn<Input, T>(
+    callback: (input: Input, trx: TxOrDb) => Promise<T>
+  ) {
+    return (input: Input) => use(async (tx) => callback(input, tx));
+  }
+
+  export async function effect(effect: () => any | Promise<any>) {
+    try {
+      const { effects } = TransactionContext.use();
+      effects.push(effect);
+    } catch {
+      await effect();
+    }
   }
 
   export async function transaction<T>(
-    callback: (db: DrizzleDatabase) => Promise<T>
+    callback: (tx: TxOrDb) => Promise<T>,
+    config?: PgTransactionConfig
   ) {
-    return runWithContext(() => callback(get()));
-  }
-
-  export function get() {
-    const context = storage.getStore();
-    if (!context) {
-      throw new Error(
-        "Database context not found. Wrap the call in Database.use(...)."
-      );
+    try {
+      const { tx } = TransactionContext.use();
+      return callback(tx);
+    } catch (err) {
+      if (err instanceof Context.NotFound) {
+        const effects: (() => void | Promise<void>)[] = [];
+        const result = await client().transaction(async (tx) => {
+          return TransactionContext.provide({ tx, effects }, () =>
+            callback(tx)
+          );
+        }, config);
+        await Promise.all(effects.map((x) => x()));
+        return result;
+      }
+      throw err;
     }
-    return context.db;
   }
 }
-
-export const db: DrizzleDatabase = new Proxy({} as DrizzleDatabase, {
-  get(_target, prop, receiver) {
-    const database = Database.get();
-    const value = Reflect.get(database, prop, receiver);
-    if (typeof value === "function") {
-      return value.bind(database);
-    }
-    return value;
-  },
-});
-
-// import { drizzle } from "drizzle-orm/node-postgres";
-// import { Pool } from "pg";
-
-// const pool = new Pool({
-//   connectionString: process.env.DATABASE_URL,
-// });
-
-// export type DrizzleDB = typeof db;
-
-// const db = drizzle({ client: pool, casing: "snake_case" });
-
-// export { db };
-
-// import { drizzle } from "drizzle-orm/neon-http";
-
-// const db = drizzle(process.env.DATABASE_URL!);
-
-// export type DrizzleDB = typeof db;
-
-// export { db };

@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt } from "better-auth/plugins";
-import { db } from "@a0dotrun/app/db";
+import { Database } from "@a0dotrun/app/db";
 import {
   users,
   sessions,
@@ -61,7 +61,7 @@ export const authConfig = {
 
 const auth: ReturnType<typeof betterAuth> = betterAuth({
   ...authConfig,
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(Database.raw(), {
     provider: "pg",
     schema: {
       user: users,

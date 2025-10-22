@@ -3,7 +3,7 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { App as GhApp } from "octokit";
 import z from "zod/v4";
-import { Database, type DrizzleDatabase } from "../db";
+import { Database } from "../db";
 import { type GitHubAccountType, gitHubInstallationTable } from "../db/schema";
 import { GitHubInstallationSetup } from "../ty";
 import { type ServerReadme } from "../ty";
@@ -24,9 +24,6 @@ function getGhApp() {
 }
 
 export namespace GitHub {
-  const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) =>
-    Database.use(callback);
-
   export async function installationDetails(githubInstallationId: number) {
     function isUserOrOrg(
       account: any
@@ -58,40 +55,38 @@ export namespace GitHub {
       setupAction: z.string(),
     }),
     async (gh) =>
-      await withDatabase((db) =>
-        db.transaction(async (tx) => {
-          return tx
-            .insert(gitHubInstallationTable)
-            .values({
-              githubInstallationId: gh.githubInstallationId,
-              githubAppId: gh.githubAppId,
-              accountId: gh.accountId,
-              accountLogin: gh.accountLogin,
-              accountType: gh.accountType as GitHubAccountType,
-              userId: gh.userId,
-              setupAction: gh.setupAction as GitHubInstallationSetup,
-            })
-            .onConflictDoUpdate({
-              target: [
-                gitHubInstallationTable.githubAppId,
-                gitHubInstallationTable.userId,
-                gitHubInstallationTable.accountLogin,
-              ],
-              set: {
-                githubInstallationId: sql`EXCLUDED.github_installation_id`,
-                accountId: sql`EXCLUDED.account_id`,
-                accountType: sql`EXCLUDED.account_type`,
-                setupAction: sql`EXCLUDED.setup_action`,
-                updatedAt: sql`NOW()`,
-              },
-            })
-            .returning({
-              id: gitHubInstallationTable.githubInstallationId,
-            })
-            .execute()
-            .then((row) => row[0]?.id);
-        })
-      )
+      await Database.transaction(async (tx) => {
+        return tx
+          .insert(gitHubInstallationTable)
+          .values({
+            githubInstallationId: gh.githubInstallationId,
+            githubAppId: gh.githubAppId,
+            accountId: gh.accountId,
+            accountLogin: gh.accountLogin,
+            accountType: gh.accountType as GitHubAccountType,
+            userId: gh.userId,
+            setupAction: gh.setupAction as GitHubInstallationSetup,
+          })
+          .onConflictDoUpdate({
+            target: [
+              gitHubInstallationTable.githubAppId,
+              gitHubInstallationTable.userId,
+              gitHubInstallationTable.accountLogin,
+            ],
+            set: {
+              githubInstallationId: sql`EXCLUDED.github_installation_id`,
+              accountId: sql`EXCLUDED.account_id`,
+              accountType: sql`EXCLUDED.account_type`,
+              setupAction: sql`EXCLUDED.setup_action`,
+              updatedAt: sql`NOW()`,
+            },
+          })
+          .returning({
+            id: gitHubInstallationTable.githubInstallationId,
+          })
+          .execute()
+          .then((row) => row[0]?.id);
+      })
   );
 
   export const userInstallation = fn(
@@ -100,9 +95,9 @@ export namespace GitHub {
       githubAppId: z.number(),
       account: z.string(),
     }),
-    async (filter) =>
-      await withDatabase(async (db) => {
-        return await db
+    async (filter) => {
+      return await Database.use(async (db) => {
+        const res = await db
           .select({
             githubInstallationId: gitHubInstallationTable.githubInstallationId,
             githubAppId: gitHubInstallationTable.githubAppId,
@@ -121,14 +116,16 @@ export namespace GitHub {
             )
           )
           .execute()
-          .then((rows) => rows[0]);
-      })
+          .then((rows) => rows.at(0));
+        return res ?? undefined;
+      });
+    }
   );
 
   export const userInstalls = fn(
     z.object({ userId: z.string(), githubAppId: z.number() }),
     async (filter) =>
-      await withDatabase((db) =>
+      await Database.use(async (db) =>
         db
           .select({
             githubInstallationId: gitHubInstallationTable.githubInstallationId,

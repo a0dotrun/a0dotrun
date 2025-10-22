@@ -3,9 +3,9 @@ import { createHash } from "crypto";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { ulid } from "ulid";
 import z from "zod/v4";
-import { defaultAvatarUrl, parseRepoUrl } from "./helpers";
 import { env } from "../env";
-import { Database, db, type DrizzleDatabase } from "../db";
+import { Database } from "../db";
+import { defaultAvatarUrl, parseRepoUrl } from "./helpers";
 import {
   AddServer,
   collectionTable,
@@ -22,8 +22,6 @@ import {
 } from "../db/schema";
 import { ServerModeEnum, ServerVisibility, ServerVisibilityEnum } from "../ty";
 import { GitHub } from "./github";
-
-const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) => Database.use(callback);
 
 export function serverHomepage(username: string, name: string) {
   return `https://${env.BASEURL}/servers/${username}/${name}`;
@@ -48,7 +46,7 @@ export namespace Server {
   export const serversInCollection = fn(
     z.object({ name: z.string(), limit: z.number().default(3) }),
     async (filter) =>
-      withDatabase((db) =>
+      await Database.use((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -93,9 +91,9 @@ export namespace Server {
       username: z.string(),
       name: z.string(),
     }),
-    async (filter) =>
-      withDatabase(async () => {
-        const result = await db
+    async (filter) => {
+      const result = await Database.use((db) =>
+        db
           .select({
             serverId: serverTable.serverId,
             name: serverTable.name,
@@ -129,23 +127,23 @@ export namespace Server {
             )
           )
           .execute()
-          .then((row) => row[0]);
-        if (!result) return result;
-        // check for visibility, if private then check ownership,
-        // if public return server
-        if (result.visibility === ServerVisibilityEnum.PRIVATE) {
-          if (filter.callerUserId === result.owner.userId) return result;
-          else return undefined;
-        }
-
-        return result;
-      })
+          .then((row) => row.at(0))
+      );
+      if (!result) return result;
+      // check for visibility, if private then check ownership,
+      // if public return server
+      if (result.visibility === ServerVisibilityEnum.PRIVATE) {
+        if (filter.callerUserId === result.owner.userId) return result;
+        else return undefined;
+      }
+      return result;
+    }
   );
 
   export const publicServer = fn(
     z.object({ username: z.string(), name: z.string() }),
     async (filter) =>
-      withDatabase((db) =>
+      await Database.use((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -181,14 +179,14 @@ export namespace Server {
             )
           )
           .execute()
-          .then((row) => row[0])
+          .then((row) => row.at(0))
       )
   );
 
   export const ownedServer = fn(
     z.object({ username: z.string(), name: z.string() }),
     async (filter) =>
-      withDatabase((db) =>
+      await Database.use((db) =>
         db
           .select()
           .from(serverTable)
@@ -199,7 +197,7 @@ export namespace Server {
             )
           )
           .execute()
-          .then((row) => row[0])
+          .then((row) => row.at(0))
       )
   );
 
@@ -222,7 +220,7 @@ export namespace Server {
             )
           : eq(serverTable.visibility, filter.visibility as ServerVisibility);
 
-      return await withDatabase((db) =>
+      return await Database.use((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -275,7 +273,7 @@ export namespace Server {
               eq(serverTable.visibility, ServerVisibilityEnum.PRIVATE)
             )
           : eq(serverTable.visibility, filter.visibility as ServerVisibility);
-      return await withDatabase((db) =>
+      return await Database.use((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -315,32 +313,27 @@ export namespace Server {
   );
 
   export const addNew = fn(AddServer, async (server) => {
-    return await withDatabase((db) =>
-      db.transaction(async (tx) => {
-        const homepage = serverHomepage(server.username, server.name);
-        const parsed = CreateServer.safeParse(server);
-        if (!parsed.success)
-          throw new ServerAddError({ message: parsed.error.message });
+    return await Database.transaction(async (tx) => {
+      const homepage = serverHomepage(server.username, server.name);
+      const parsed = CreateServer.safeParse(server);
+      if (!parsed.success)
+        throw new ServerAddError({ message: parsed.error.message });
 
-        const [newServer] = await tx
-          .insert(serverTable)
-          .values({ ...parsed.data, homepage })
-          .returning();
-        if (!newServer)
-          throw new ServerAddError({ message: "Failed to insert new server" });
+      const [newServer] = await tx
+        .insert(serverTable)
+        .values({ ...parsed.data, homepage })
+        .returning();
+      if (!newServer)
+        throw new ServerAddError({ message: "Failed to insert new server" });
 
-        await tx.insert(serverInstallTable).values({
-          serverId: newServer.serverId,
-          userId: server.userId,
-        });
-        return newServer;
-      })
-    );
+      await tx.insert(serverInstallTable).values({
+        serverId: newServer.serverId,
+        userId: server.userId,
+      });
+      return newServer;
+    });
   });
 
-  // TODO:
-  // add a field in server install for status like, registered, ready, error, etc.
-  // do that whenever a server is installed for the user.
   export const importFromGitHub = fn(
     GitHubImportServer.extend({ githubAppId: z.number() }),
     async (server) => {
@@ -398,42 +391,40 @@ export namespace Server {
           message: "Failed GitHub import schema validation",
         });
 
-      return await withDatabase((db) =>
-        db.transaction(async (tx) => {
-          const homepage = serverHomepage(
-            requestParsed.data.username,
-            requestParsed.data.githubRepo
-          );
-          const parsed = CreateServer.safeParse({
-            ...requestParsed.data,
-            avatarUrl:
-              requestParsed.data.avatarUrl ??
-              defaultAvatarUrl(requestParsed.data.name),
-            homepage,
+      return await Database.transaction(async (tx) => {
+        const homepage = serverHomepage(
+          requestParsed.data.username,
+          requestParsed.data.githubRepo
+        );
+        const parsed = CreateServer.safeParse({
+          ...requestParsed.data,
+          avatarUrl:
+            requestParsed.data.avatarUrl ??
+            defaultAvatarUrl(requestParsed.data.name),
+          homepage,
+        });
+        if (!parsed.success) {
+          throw new GitHubError({
+            message: "Failed GitHub create server schema validation",
           });
-          if (!parsed.success) {
-            throw new GitHubError({
-              message: "Failed GitHub create server schema validation",
-            });
-          }
+        }
 
-          const [newServer] = await tx
-            .insert(serverTable)
-            .values(parsed.data)
-            .returning();
+        const [newServer] = await tx
+          .insert(serverTable)
+          .values(parsed.data)
+          .returning();
 
-          if (!newServer)
-            throw new GitHubError({
-              message: "Failed to insert GitHub import server",
-            });
-
-          await tx.insert(serverInstallTable).values({
-            serverId: newServer.serverId,
-            userId: newServer.userId,
+        if (!newServer)
+          throw new GitHubError({
+            message: "Failed to insert GitHub import server",
           });
-          return newServer;
-        })
-      );
+
+        await tx.insert(serverInstallTable).values({
+          serverId: newServer.serverId,
+          userId: newServer.userId,
+        });
+        return newServer;
+      });
     }
   );
 
@@ -443,41 +434,37 @@ export namespace Server {
   }
 
   export const config = fn(z.string(), async (serverId) => {
-    return await withDatabase((db) =>
-      db.transaction(async (tx) =>
-        tx
-          .select()
-          .from(serverConfigTable)
-          .where(eq(serverConfigTable.serverId, serverId))
-          .execute()
-          .then((row) => row[0])
-      )
+    return await Database.transaction(async (tx) =>
+      tx
+        .select()
+        .from(serverConfigTable)
+        .where(eq(serverConfigTable.serverId, serverId))
+        .execute()
+        .then((row) => row[0])
     );
   });
 
   export const upsertConfig = fn(UpsertServerConfig, async (upsert) => {
-    return await withDatabase((db) =>
-      db.transaction(async (tx) => {
-        const configHash = generateConfigHash(upsert.config ?? {});
-        return tx
-          .insert(serverConfigTable)
-          .values({ ...upsert, configHash })
-          .onConflictDoUpdate({
-            target: serverConfigTable.serverId,
-            set: {
-              envs: upsert.envs,
-              config: upsert.config,
-              configHash: configHash,
-              rootDir: upsert.rootDir,
-              revision: ulid().toLowerCase(),
-              updatedAt: sql`CURRENT_TIMESTAMP`,
-            },
-          })
-          .returning()
-          .execute()
-          .then((row) => row[0]);
-      })
-    );
+    return await Database.transaction(async (tx) => {
+      const configHash = generateConfigHash(upsert.config ?? {});
+      return tx
+        .insert(serverConfigTable)
+        .values({ ...upsert, configHash })
+        .onConflictDoUpdate({
+          target: serverConfigTable.serverId,
+          set: {
+            envs: upsert.envs,
+            config: upsert.config,
+            configHash: configHash,
+            rootDir: upsert.rootDir,
+            revision: ulid().toLowerCase(),
+            updatedAt: sql`CURRENT_TIMESTAMP`,
+          },
+        })
+        .returning()
+        .execute()
+        .then((row) => row[0]);
+    });
   });
 }
 

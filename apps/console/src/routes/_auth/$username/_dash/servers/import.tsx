@@ -14,8 +14,8 @@ type ImportRepoSearch = {
 export const Route = createFileRoute('/_auth/$username/_dash/servers/import')({
   validateSearch: (search: Record<string, unknown>): ImportRepoSearch => {
     return {
-      name: (search?.name as string) || undefined,
-      owner: (search?.owner as string) || undefined,
+      name: (search.name as string) || undefined,
+      owner: (search.owner as string) || undefined,
     }
   },
   loaderDeps: ({ search: { name, owner } }) => ({
@@ -24,13 +24,14 @@ export const Route = createFileRoute('/_auth/$username/_dash/servers/import')({
   }),
   loader: async ({ deps, context: { sessionUser } }) => {
     let repo = null
-    const owner = deps?.owner || sessionUser.username
-    const name = deps?.name
+    const owner = deps.owner || sessionUser.username
+    const name = deps.name
     try {
       if (name) {
         const ghInstalled = await githubUserInstallationFn({
           data: { account: owner, userId: sessionUser.userId },
         })
+
         if (ghInstalled) {
           repo = await githubRepoDetailFn({
             data: {

@@ -1,17 +1,14 @@
-import { and, count, desc, eq, gt } from "drizzle-orm";
-import { Database, db, type DrizzleDatabase } from "../db";
-import { serverInstallTable, serverTable, serverViewTable } from "../db/schema";
 import { fn } from "@a0dotrun/utils";
+import { and, count, desc, eq, gt } from "drizzle-orm";
+import { Database } from "../db";
+import { serverInstallTable, serverTable, serverViewTable } from "../db/schema";
 import z from "zod/v4";
 
 export namespace ServerTracker {
-  const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) =>
-    Database.use(callback);
-
   export const recentlyViewedServers = fn(
     z.object({ userId: z.string(), limit: z.number().default(3) }),
     async (filter) => {
-      return await withDatabase((db) =>
+      return await Database.use((db) =>
         db
           .select({
             viewId: serverViewTable.viewId,
@@ -39,21 +36,19 @@ export namespace ServerTracker {
   export const recentViewed = fn(
     z.object({ userId: z.string(), serverId: z.string() }),
     async (insert) =>
-      withDatabase((db) =>
-        db.transaction(async (tx) => {
-          return tx
-            .insert(serverViewTable)
-            .values({ ...insert })
-            .onConflictDoNothing()
-            .returning({ viewId: serverViewTable.viewId })
-            .execute()
-            .then((rows) => rows[0]);
-        })
-      )
+      Database.transaction(async (tx) => {
+        return tx
+          .insert(serverViewTable)
+          .values({ ...insert })
+          .onConflictDoNothing()
+          .returning({ viewId: serverViewTable.viewId })
+          .execute()
+          .then((rows) => rows.at(0));
+      })
   );
 
   export const activeCount = fn(z.string(), async (userId) => {
-    return await withDatabase((db) =>
+    return await Database.use((db) =>
       db
         .select({
           count: count(serverInstallTable.installId),
@@ -73,7 +68,7 @@ export namespace ServerTracker {
   export const topUsedServers = fn(
     z.object({ userId: z.string(), limit: z.number() }),
     async (filter) => {
-      return await withDatabase((db) =>
+      return await Database.use((db) =>
         db
           .select({
             installId: serverInstallTable.installId,

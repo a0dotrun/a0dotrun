@@ -1,6 +1,6 @@
 import { and, desc, eq, or } from "drizzle-orm";
 import z from "zod/v4";
-import { Database, db, type DrizzleDatabase } from "../db";
+import { Database } from "../db";
 import {
   buildTable,
   InsertDeploymentLog,
@@ -27,6 +27,7 @@ import {
 import { UpdateBuildDeploy } from "../db/schema";
 import { GitHubSourceDeployer } from "../infra/ty";
 import { fn, NamedError } from "@a0dotrun/utils";
+
 // import { getResonateClient } from "../lib/rsc";
 // import { CloudBuildBuildNDeploy } from "../infra/providers/gcp";
 
@@ -67,15 +68,6 @@ export const DeployJobRequestError = NamedError.create(
   })
 );
 
-const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) =>
-  Database.use(callback);
-
-// type DBTx = PgTransaction<
-//   NodePgQueryResultHKT,
-//   Record<string, never>,
-//   ExtractTablesWithRelations<Record<string, never>>
-// >;
-
 export namespace ServerDeployment {
   export const deployments = fn(
     z.object({
@@ -97,7 +89,7 @@ export namespace ServerDeployment {
             )
           : eq(deploymentTable.target, filter.target as DeploymentTargetType);
 
-      return await withDatabase((db) =>
+      return await Database.use((db) =>
         db
           .select({
             deploymentId: deploymentTable.deploymentId,
@@ -132,7 +124,7 @@ export namespace ServerDeployment {
       deploymentId: z.string(),
     }),
     async (filter) => {
-      return await withDatabase((db) =>
+      const result = await Database.use((db) =>
         db
           .select({
             deploymentId: deploymentTable.deploymentId,
@@ -166,8 +158,8 @@ export namespace ServerDeployment {
             )
           )
           .execute()
-          .then((row) => row[0])
       );
+      return result.at(0) ?? undefined;
     }
   );
 
@@ -192,7 +184,7 @@ export namespace ServerDeployment {
             )
           : eq(deploymentTable.target, filter.target as DeploymentTargetType);
 
-      return await withDatabase((db) =>
+      return await Database.use((db) =>
         db
           .select({
             deploymentId: deploymentTable.deploymentId,
@@ -230,11 +222,10 @@ export namespace ServerDeployment {
   export const triggerGitHubBuildDeploy = fn(
     DeployWithGitHubRequest,
     async (deploy) => {
-      return await withDatabase((db) =>
-        db.transaction(async (tx) => {
-          const installedServer = await tx
-            .select()
-            .from(serverInstallTable)
+      return await Database.transaction(async (tx) => {
+        const installedServer = await tx
+          .select()
+          .from(serverInstallTable)
           .where(
             and(
               eq(serverInstallTable.userId, deploy.user.userId),
@@ -408,19 +399,17 @@ export namespace ServerDeployment {
           buildId: newBuild.buildId,
           revisionId: revision.revisionId,
         };
-        })
-      );
+      });
     }
   );
 
   export const updateBuildDeploy = fn(
     UpdateBuildDeploy.extend({ buildId: z.string(), deploymentId: z.string() }),
     async (updates) => {
-      return await withDatabase((db) =>
-        db.transaction(async (tx) => {
-          await tx
-            .update(buildTable)
-            .set({
+      return await Database.transaction(async (tx) => {
+        await tx
+          .update(buildTable)
+          .set({
             imageRef: updates.build.imageRef,
             imageDigest: updates.build.imageDigest,
             builtAt: updates.build.builtAt,
@@ -431,65 +420,60 @@ export namespace ServerDeployment {
           .execute()
           .then((row) => row[0]);
 
-          await tx
-            .update(deploymentTable)
-            .set({
-              status: updates.deployment.status,
-            })
-            .where(eq(deploymentTable.deploymentId, updates.deploymentId))
-            .returning()
-            .execute()
-            .then((row) => row[0]);
-        })
-      );
+        await tx
+          .update(deploymentTable)
+          .set({
+            status: updates.deployment.status,
+          })
+          .where(eq(deploymentTable.deploymentId, updates.deploymentId))
+          .returning()
+          .execute()
+          .then((row) => row[0]);
+      });
     }
   );
 
   export const updateBuild = fn(
     UpdateBuild.extend({ buildId: z.string() }),
     async (updates) => {
-      return await withDatabase((db) =>
-        db.transaction(async (tx) => {
-          await tx
-            .update(buildTable)
-            .set({
+      return await Database.transaction(async (tx) => {
+        await tx
+          .update(buildTable)
+          .set({
             imageRef: updates.imageRef,
             imageDigest: updates.imageDigest,
             builtAt: updates.builtAt,
             status: updates.status,
           })
-            .where(eq(buildTable.buildId, updates.buildId))
-            .returning()
-            .execute()
-            .then((row) => row[0]);
-        })
-      );
+          .where(eq(buildTable.buildId, updates.buildId))
+          .returning()
+          .execute()
+          .then((row) => row[0]);
+      });
     }
   );
 
   export const updateDeploy = fn(
     UpdateDeployment.extend({ deploymentId: z.string() }),
     async (updates) => {
-      return await withDatabase((db) =>
-        db.transaction(async (tx) => {
-          await tx
-            .update(deploymentTable)
-            .set({
-              status: updates.status,
-            })
-            .where(eq(deploymentTable.deploymentId, updates.deploymentId))
-            .returning()
-            .execute()
-            .then((row) => row[0]);
-        })
-      );
+      return await Database.transaction(async (tx) => {
+        await tx
+          .update(deploymentTable)
+          .set({
+            status: updates.status,
+          })
+          .where(eq(deploymentTable.deploymentId, updates.deploymentId))
+          .returning()
+          .execute()
+          .then((row) => row[0]);
+      });
     }
   );
 
   export const ingestLog = fn(
     InsertDeploymentLog,
     async (log) =>
-      withDatabase((db) =>
+      await Database.use((db) =>
         db
           .insert(deploymentLogTable)
           .values(log)

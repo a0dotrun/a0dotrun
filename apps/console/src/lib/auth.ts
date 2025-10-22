@@ -4,7 +4,7 @@ import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { jwt } from 'better-auth/plugins'
 import { reactStartCookies } from 'better-auth/react-start'
-import { db } from '@a0dotrun/app/db'
+import { Database } from '@a0dotrun/app/db'
 import {
   UserType,
   accounts,
@@ -62,9 +62,23 @@ export const authConfig = {
   },
 } as const
 
+// Create a wrapper that exposes Database.use for the drizzle adapter
+const createDatabaseWrapper = () => {
+  return new Proxy({} as any, {
+    get(_target, prop) {
+      // Intercept all method calls and route through Database.use
+      return (...args: Array<any>) => {
+        return Database.use(async (db: any) => {
+          return await db[prop](...args)
+        })
+      }
+    },
+  })
+}
+
 const auth: ReturnType<typeof betterAuth> = betterAuth({
   ...authConfig,
-  database: drizzleAdapter(db, {
+  database: drizzleAdapter(createDatabaseWrapper(), {
     provider: 'pg',
     schema: {
       user: users,

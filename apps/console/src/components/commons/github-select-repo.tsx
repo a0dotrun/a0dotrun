@@ -78,7 +78,7 @@ export function GitHubSelectRepo({ username }: { username: string }) {
   }
 
   const repositories =
-    data?.repos?.map((repo: GitHubRepo) => ({
+    data?.repos.map((repo: GitHubRepo) => ({
       value: repo.fullName,
       label: repo.fullName,
       id: repo.id,

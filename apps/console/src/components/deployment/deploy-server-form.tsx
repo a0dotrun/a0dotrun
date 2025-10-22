@@ -89,7 +89,7 @@ export function GitHubDeployServerForm({
   //     });
   //   };
 
-  async function onSubmit(values: GitHubDeployServerFormValues) {
+  function onSubmit(values: GitHubDeployServerFormValues) {
     console.log(values)
     // const formData = new FormData();
     // formData.append("name", values.name);

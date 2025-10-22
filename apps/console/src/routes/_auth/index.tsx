@@ -32,7 +32,7 @@ export const Route = createFileRoute('/_auth/')({
 function App() {
   const { sessionUser } = Route.useRouteContext()
   const username = sessionUser.username
-  const avatarUrl = sessionUser.image ?? `https://avatar.vercel.sh/${username}`
+  const avatarUrl = sessionUser.image || `https://avatar.vercel.sh/${username}`
   const teams = [
     {
       username,

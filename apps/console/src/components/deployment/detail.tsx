@@ -22,11 +22,12 @@ export function DeploymentDetail({
   deployment,
 }: {
   username: string
-  deployment: UserDeploymentDetail
+  deployment: UserDeploymentDetail | undefined
 }) {
+  if (!deployment) return null
+
   const avatarUrl = `https://avatar.vercel.sh/${deployment.username}`
-  const createdDateLabel =
-    deployment.createdAt && format(new Date(deployment.createdAt), 'MMM d')
+  const createdDateLabel = format(new Date(deployment.createdAt), 'MMM d')
   const domainUrl = `https://mcp.riverly.tech/${deployment.username}/${deployment.name}`
   const [copiedText, copyToClipboard] = useCopyToClipboard()
   const hasCopiedDomain = copiedText === domainUrl

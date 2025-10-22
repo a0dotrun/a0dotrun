@@ -38,6 +38,7 @@ export const Route = createFileRoute(
 function RouteComponent() {
   const { server } = Route.useLoaderData()
   const { username, owner, name } = Route.useParams()
+  console.log(username, owner, name)
   const serverAvatarUrl =
     server.avatarUrl || `https://avatar.vercel.sh/${server.name}`
 
@@ -79,7 +80,7 @@ function RouteComponent() {
   const pythonSnippet = `Python Code!!`
   const jsonSnippet = `JSON Code!!`
 
-  const isReady = false
+  // const isReady = false
 
   return (
     <div className="py-12 px-4">
@@ -138,7 +139,7 @@ function RouteComponent() {
                   server.license && (
                     <div className="flex-1 min-w-0 px-4 py-1 border-b text-sm gap-3 flex items-center h-9 has-[>svg]:px-3 justify-center">
                       <Scale className="w-4 h-4" />
-                      <span>{server.license.name ?? 'Unlicense'}</span>
+                      <span>{server.license.name || 'Unlicense'}</span>
                     </div>
                   )}
                 {githubUrl && (
@@ -156,10 +157,7 @@ function RouteComponent() {
         <div className="flex flex-col lg:flex-row gap-8">
           <div className="flex flex-col gap-8 w-full lg:w-2/3">
             <div className="relative">
-              <Tabs
-                defaultValue="typescript"
-                className={`relative w-full ${isReady ? '' : 'pointer-events-none'}`}
-              >
+              <Tabs defaultValue="typescript" className={`relative w-full`}>
                 <TabsList className="grid h-auto w-full grid-cols-3 gap-3 bg-transparent p-0 mb-6">
                   <TabsTrigger
                     value="typescript"
@@ -186,7 +184,7 @@ function RouteComponent() {
                         fill="white"
                       />
                     </svg>
-                    <p className="text-sm font-medium select-none z-[1]">
+                    <p className="text-sm font-medium select-none z-1">
                       TypeScript
                     </p>
                   </TabsTrigger>
@@ -209,7 +207,7 @@ function RouteComponent() {
                         fill="#FFD43B"
                       />
                     </svg>
-                    <p className="text-sm font-medium select-none z-[1]">
+                    <p className="text-sm font-medium select-none z-1">
                       Python
                     </p>
                   </TabsTrigger>
@@ -272,9 +270,7 @@ function RouteComponent() {
                         fill="none"
                       />
                     </svg>
-                    <p className="text-sm font-medium select-none z-[1]">
-                      JSON
-                    </p>
+                    <p className="text-sm font-medium select-none z-1">JSON</p>
                   </TabsTrigger>
                 </TabsList>
                 <div className="rounded-2xl overflow-hidden">
@@ -338,7 +334,7 @@ function RouteComponent() {
                   </div>
                 </div>
               </Tabs>
-              {!isReady ? (
+              {/* {!isReady ? (
                 <div className="absolute inset-0 z-10 flex flex-col items-center justify-center gap-6 bg-gradient-to-b from-background/40 via-background/70 to-background">
                   <Button
                     asChild
@@ -352,7 +348,7 @@ function RouteComponent() {
                     </Link>
                   </Button>
                 </div>
-              ) : null}
+              ) : null} */}
             </div>
           </div>
           <div className="w-full lg:w-1/3">

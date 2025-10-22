@@ -3,7 +3,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite dev --port 4173",
+    "dev": "vite dev --port 3000",
     "preview": "vite preview",
     "build": "vite build --mode production && tsc --noEmit",
     "deploy": "vite build && wrangler deploy",

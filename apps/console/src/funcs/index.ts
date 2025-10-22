@@ -76,10 +76,11 @@ export const userDeployment = createServerFn({ method: 'GET' })
   .handler(async ({ data, context: { user: sessionUser } }) => {
     if (!sessionUser) throw new Error('Unauthenticated')
 
-    return ServerDeployment.userDeployment({
+    const res = await ServerDeployment.userDeployment({
       userId: sessionUser.userId,
       deploymentId: data.deploymentId,
     })
+    return res
   })
 
 type Visibility = ServerVisibility | 'both'

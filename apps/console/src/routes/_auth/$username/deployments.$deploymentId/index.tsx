@@ -1,4 +1,4 @@
-import { createFileRoute, notFound } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { userDeployment } from '@/funcs'
 import { DeploymentDetail } from '@/components/deployment/detail'
 import { WithClient } from '@/components/commons/with-client'
@@ -9,7 +9,6 @@ export const Route = createFileRoute(
 )({
   loader: async ({ params: { deploymentId } }) => {
     const deployment = await userDeployment({ data: { deploymentId } })
-    if (!deployment) throw notFound()
     return {
       deployment,
     }

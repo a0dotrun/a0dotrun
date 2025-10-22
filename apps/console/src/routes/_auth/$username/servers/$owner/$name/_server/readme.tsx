@@ -21,7 +21,7 @@ export const Route = createFileRoute(
         <div className="max-w-7xl mx-auto">
           <div className="text-center text-muted-foreground py-24">
             <p className="text-base">
-              {error?.message || 'Something went wrong!'}
+              {error.message || 'Something went wrong!'}
             </p>
           </div>
         </div>
