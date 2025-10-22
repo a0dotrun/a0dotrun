@@ -5,7 +5,7 @@ import { ulid } from "ulid";
 import z from "zod/v4";
 import { defaultAvatarUrl, parseRepoUrl } from "./helpers";
 import { env } from "../env";
-import { Database, db } from "../db";
+import { Database, db, type DrizzleDatabase } from "../db";
 import {
   AddServer,
   collectionTable,
@@ -23,7 +23,7 @@ import {
 import { ServerModeEnum, ServerVisibility, ServerVisibilityEnum } from "../ty";
 import { GitHub } from "./github";
 
-const withDatabase = <T>(callback: () => Promise<T>) => Database.use(callback);
+const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) => Database.use(callback);
 
 export function serverHomepage(username: string, name: string) {
   return `https://${env.BASEURL}/servers/${username}/${name}`;
@@ -48,7 +48,7 @@ export namespace Server {
   export const serversInCollection = fn(
     z.object({ name: z.string(), limit: z.number().default(3) }),
     async (filter) =>
-      withDatabase(() =>
+      withDatabase((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -145,7 +145,7 @@ export namespace Server {
   export const publicServer = fn(
     z.object({ username: z.string(), name: z.string() }),
     async (filter) =>
-      withDatabase(() =>
+      withDatabase((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -188,7 +188,7 @@ export namespace Server {
   export const ownedServer = fn(
     z.object({ username: z.string(), name: z.string() }),
     async (filter) =>
-      withDatabase(() =>
+      withDatabase((db) =>
         db
           .select()
           .from(serverTable)
@@ -222,7 +222,7 @@ export namespace Server {
             )
           : eq(serverTable.visibility, filter.visibility as ServerVisibility);
 
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -275,7 +275,7 @@ export namespace Server {
               eq(serverTable.visibility, ServerVisibilityEnum.PRIVATE)
             )
           : eq(serverTable.visibility, filter.visibility as ServerVisibility);
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             serverId: serverTable.serverId,
@@ -315,7 +315,7 @@ export namespace Server {
   );
 
   export const addNew = fn(AddServer, async (server) => {
-    return withDatabase(() =>
+    return await withDatabase((db) =>
       db.transaction(async (tx) => {
         const homepage = serverHomepage(server.username, server.name);
         const parsed = CreateServer.safeParse(server);
@@ -398,7 +398,7 @@ export namespace Server {
           message: "Failed GitHub import schema validation",
         });
 
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db.transaction(async (tx) => {
           const homepage = serverHomepage(
             requestParsed.data.username,
@@ -443,7 +443,7 @@ export namespace Server {
   }
 
   export const config = fn(z.string(), async (serverId) => {
-    return withDatabase(() =>
+    return await withDatabase((db) =>
       db.transaction(async (tx) =>
         tx
           .select()
@@ -456,7 +456,7 @@ export namespace Server {
   });
 
   export const upsertConfig = fn(UpsertServerConfig, async (upsert) => {
-    return withDatabase(() =>
+    return await withDatabase((db) =>
       db.transaction(async (tx) => {
         const configHash = generateConfigHash(upsert.config ?? {});
         return tx

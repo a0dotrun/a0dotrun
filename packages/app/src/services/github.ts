@@ -3,7 +3,7 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { App as GhApp } from "octokit";
 import z from "zod/v4";
-import { Database, db } from "../db";
+import { Database, type DrizzleDatabase } from "../db";
 import { type GitHubAccountType, gitHubInstallationTable } from "../db/schema";
 import { GitHubInstallationSetup } from "../ty";
 import { type ServerReadme } from "../ty";
@@ -24,7 +24,7 @@ function getGhApp() {
 }
 
 export namespace GitHub {
-  const withDatabase = <T>(callback: () => Promise<T>) =>
+  const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) =>
     Database.use(callback);
 
   export async function installationDetails(githubInstallationId: number) {
@@ -58,7 +58,7 @@ export namespace GitHub {
       setupAction: z.string(),
     }),
     async (gh) =>
-      withDatabase(() =>
+      await withDatabase((db) =>
         db.transaction(async (tx) => {
           return tx
             .insert(gitHubInstallationTable)
@@ -101,37 +101,34 @@ export namespace GitHub {
       account: z.string(),
     }),
     async (filter) =>
-      withDatabase(() =>
-        db.transaction(async (tx) => {
-          return tx
-            .select({
-              githubInstallationId:
-                gitHubInstallationTable.githubInstallationId,
-              githubAppId: gitHubInstallationTable.githubAppId,
-              accountLogin: gitHubInstallationTable.accountLogin,
-              accountType: gitHubInstallationTable.accountType,
-              setupAction: gitHubInstallationTable.setupAction,
-              createdAt: gitHubInstallationTable.createdAt,
-              updatedAt: gitHubInstallationTable.updatedAt,
-            })
-            .from(gitHubInstallationTable)
-            .where(
-              and(
-                eq(gitHubInstallationTable.githubAppId, filter.githubAppId),
-                eq(gitHubInstallationTable.userId, filter.userId),
-                eq(gitHubInstallationTable.accountLogin, filter.account)
-              )
+      await withDatabase(async (db) => {
+        return await db
+          .select({
+            githubInstallationId: gitHubInstallationTable.githubInstallationId,
+            githubAppId: gitHubInstallationTable.githubAppId,
+            accountLogin: gitHubInstallationTable.accountLogin,
+            accountType: gitHubInstallationTable.accountType,
+            setupAction: gitHubInstallationTable.setupAction,
+            createdAt: gitHubInstallationTable.createdAt,
+            updatedAt: gitHubInstallationTable.updatedAt,
+          })
+          .from(gitHubInstallationTable)
+          .where(
+            and(
+              eq(gitHubInstallationTable.githubAppId, filter.githubAppId),
+              eq(gitHubInstallationTable.userId, filter.userId),
+              eq(gitHubInstallationTable.accountLogin, filter.account)
             )
-            .execute()
-            .then((rows) => rows[0]);
-        })
-      )
+          )
+          .execute()
+          .then((rows) => rows[0]);
+      })
   );
 
   export const userInstalls = fn(
     z.object({ userId: z.string(), githubAppId: z.number() }),
     async (filter) =>
-      withDatabase(() =>
+      await withDatabase((db) =>
         db
           .select({
             githubInstallationId: gitHubInstallationTable.githubInstallationId,

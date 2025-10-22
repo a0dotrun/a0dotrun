@@ -1,6 +1,6 @@
 import { and, desc, eq, or } from "drizzle-orm";
 import z from "zod/v4";
-import { Database, db } from "../db";
+import { Database, db, type DrizzleDatabase } from "../db";
 import {
   buildTable,
   InsertDeploymentLog,
@@ -67,7 +67,7 @@ export const DeployJobRequestError = NamedError.create(
   })
 );
 
-const withDatabase = <T>(callback: () => Promise<T>) =>
+const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) =>
   Database.use(callback);
 
 // type DBTx = PgTransaction<
@@ -97,7 +97,7 @@ export namespace ServerDeployment {
             )
           : eq(deploymentTable.target, filter.target as DeploymentTargetType);
 
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             deploymentId: deploymentTable.deploymentId,
@@ -132,7 +132,7 @@ export namespace ServerDeployment {
       deploymentId: z.string(),
     }),
     async (filter) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             deploymentId: deploymentTable.deploymentId,
@@ -192,7 +192,7 @@ export namespace ServerDeployment {
             )
           : eq(deploymentTable.target, filter.target as DeploymentTargetType);
 
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             deploymentId: deploymentTable.deploymentId,
@@ -230,7 +230,7 @@ export namespace ServerDeployment {
   export const triggerGitHubBuildDeploy = fn(
     DeployWithGitHubRequest,
     async (deploy) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db.transaction(async (tx) => {
           const installedServer = await tx
             .select()
@@ -416,7 +416,7 @@ export namespace ServerDeployment {
   export const updateBuildDeploy = fn(
     UpdateBuildDeploy.extend({ buildId: z.string(), deploymentId: z.string() }),
     async (updates) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db.transaction(async (tx) => {
           await tx
             .update(buildTable)
@@ -448,7 +448,7 @@ export namespace ServerDeployment {
   export const updateBuild = fn(
     UpdateBuild.extend({ buildId: z.string() }),
     async (updates) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db.transaction(async (tx) => {
           await tx
             .update(buildTable)
@@ -470,7 +470,7 @@ export namespace ServerDeployment {
   export const updateDeploy = fn(
     UpdateDeployment.extend({ deploymentId: z.string() }),
     async (updates) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db.transaction(async (tx) => {
           await tx
             .update(deploymentTable)
@@ -489,7 +489,7 @@ export namespace ServerDeployment {
   export const ingestLog = fn(
     InsertDeploymentLog,
     async (log) =>
-      withDatabase(() =>
+      withDatabase((db) =>
         db
           .insert(deploymentLogTable)
           .values(log)

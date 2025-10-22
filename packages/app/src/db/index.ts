@@ -6,7 +6,7 @@ import postgres from "postgres";
 const connectionString = process.env.DATABASE_URL!;
 
 type PostgresClient = ReturnType<typeof postgres>;
-type DrizzleDatabase = ReturnType<typeof drizzle>;
+export type DrizzleDatabase = ReturnType<typeof drizzle>;
 
 interface DatabaseContext {
   client: PostgresClient;

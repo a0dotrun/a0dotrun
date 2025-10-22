@@ -1,17 +1,17 @@
 import { and, count, desc, eq, gt } from "drizzle-orm";
-import { Database, db } from "../db";
+import { Database, db, type DrizzleDatabase } from "../db";
 import { serverInstallTable, serverTable, serverViewTable } from "../db/schema";
 import { fn } from "@a0dotrun/utils";
 import z from "zod/v4";
 
 export namespace ServerTracker {
-  const withDatabase = <T>(callback: () => Promise<T>) =>
+  const withDatabase = <T>(callback: (db: DrizzleDatabase) => Promise<T>) =>
     Database.use(callback);
 
   export const recentlyViewedServers = fn(
     z.object({ userId: z.string(), limit: z.number().default(3) }),
     async (filter) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             viewId: serverViewTable.viewId,
@@ -39,7 +39,7 @@ export namespace ServerTracker {
   export const recentViewed = fn(
     z.object({ userId: z.string(), serverId: z.string() }),
     async (insert) =>
-      withDatabase(() =>
+      withDatabase((db) =>
         db.transaction(async (tx) => {
           return tx
             .insert(serverViewTable)
@@ -53,7 +53,7 @@ export namespace ServerTracker {
   );
 
   export const activeCount = fn(z.string(), async (userId) => {
-    return withDatabase(() =>
+    return await withDatabase((db) =>
       db
         .select({
           count: count(serverInstallTable.installId),
@@ -73,7 +73,7 @@ export namespace ServerTracker {
   export const topUsedServers = fn(
     z.object({ userId: z.string(), limit: z.number() }),
     async (filter) => {
-      return withDatabase(() =>
+      return await withDatabase((db) =>
         db
           .select({
             installId: serverInstallTable.installId,
