@@ -1,3 +1,4 @@
+```ts
 import { createPrivateKey } from "crypto";
 import { importPKCS8, SignJWT } from "jose";
 
@@ -77,3 +78,4 @@ export namespace GitHub {
     return tokenResponse.token;
   }
 }
+```

@@ -49,7 +49,7 @@ function RouteComponent() {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <a
-                    href="https://docs.a0.run"
+                    href="https://docs.riverly.tech"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-2"
@@ -61,7 +61,7 @@ function RouteComponent() {
               <NavigationMenuItem>
                 <NavigationMenuLink asChild>
                   <a
-                    href="https://blog.a0.run"
+                    href="https://blog.riverly.tech"
                     target="_blank"
                     rel="noopener noreferrer"
                     className="px-3 py-2"

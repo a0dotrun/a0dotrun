@@ -41,7 +41,7 @@ export namespace Database {
   }
 
   export async function transaction<T>(
-    callback: (db: DrizzleDatabase) => Promise<T>,
+    callback: (db: DrizzleDatabase) => Promise<T>
   ) {
     return runWithContext(() => callback(get()));
   }
@@ -50,7 +50,7 @@ export namespace Database {
     const context = storage.getStore();
     if (!context) {
       throw new Error(
-        "Database context not found. Wrap the call in Database.use(...).",
+        "Database context not found. Wrap the call in Database.use(...)."
       );
     }
     return context.db;

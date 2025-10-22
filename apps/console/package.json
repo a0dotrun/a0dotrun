@@ -4,8 +4,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 4173",
-    "build": "vite build",
     "preview": "vite preview",
+    "build": "vite build --mode production",
     "deploy": "vite build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "test": "vitest run",

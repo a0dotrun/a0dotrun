@@ -13,3 +13,4 @@ dist-ssr
 *.local
 wrangler.jsonc
 .dev.vars
+.env.*

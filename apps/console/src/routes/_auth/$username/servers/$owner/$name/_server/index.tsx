@@ -27,15 +27,6 @@ export const Route = createFileRoute(
       data: { serverId: server.serverId },
     })
 
-    // const serverConfig = await Server.config(server.serverId)
-    // const config = (serverConfig?.config ?? {}) as Record<string, unknown>
-    // const envs = serverConfig?.envs ?? []
-    // const revision = serverConfig?.revision ?? null
-
-    // const normalizedApiBaseUrl = normalizeBaseUrl(A0_API_BASEURL)
-    // const gatewayUrl = `${normalizedApiBaseUrl}/mcp/${server.username}/${server.name}`
-    // const serverIdentifier = `@${server.username}/${server.name}`
-
     return {
       server,
       serverConfig,

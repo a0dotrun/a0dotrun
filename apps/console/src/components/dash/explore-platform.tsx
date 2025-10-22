@@ -32,7 +32,7 @@ export function ExplorePlatform({ className }: { className?: string }) {
         </Link>
         {/* Documentation */}
         <a
-          href="https://docs.a0.run"
+          href="https://docs.riverly.tech"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-start space-x-4 group cursor-pointer hover:bg-accent p-2 rounded-xl"

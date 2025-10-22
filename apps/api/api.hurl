@@ -1,4 +1,4 @@
-POST https://localapi.a0.run/internal/v1/deployments/log
+POST https://localapi.riverly.tech/internal/v1/deployments/log
 Content-Type: application/json
 
 {

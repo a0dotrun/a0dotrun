@@ -7,17 +7,17 @@ import { Database, db } from "../db";
 import { type GitHubAccountType, gitHubInstallationTable } from "../db/schema";
 import { GitHubInstallationSetup } from "../ty";
 import { type ServerReadme } from "../ty";
+import { a0GitHubAppID, a0GitHubPrivateKeyBase64 } from "../config";
 
 let ghApp: GhApp | undefined;
 
 function getGhApp() {
   if (!ghApp) {
     ghApp = new GhApp({
-      appId: process.env.A0_GITHUB_APP_ID!,
-      privateKey: Buffer.from(
-        process.env.A0_GITHUB_PRIVATE_KEY_BASE64!,
-        "base64"
-      ).toString("utf8"),
+      appId: a0GitHubAppID(),
+      privateKey: Buffer.from(a0GitHubPrivateKeyBase64, "base64").toString(
+        "utf8"
+      ),
     });
   }
   return ghApp;

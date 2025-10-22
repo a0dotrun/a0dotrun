@@ -13,7 +13,12 @@ import {
   jwks,
   UserType,
 } from '@a0dotrun/app/db/schema'
-import { a0BaseUrl, a0APIBaseUrl } from '@a0dotrun/app/config'
+import {
+  githubClientID,
+  githubClientSecret,
+  a0BaseUrl,
+  a0APIBaseUrl,
+} from '@a0dotrun/app/config'
 
 export const authConfig = {
   emailAndPassword: {
@@ -22,8 +27,8 @@ export const authConfig = {
   },
   socialProviders: {
     github: {
-      clientId: process.env.GITHUB_CLIENT_ID!,
-      clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+      clientId: githubClientID,
+      clientSecret: githubClientSecret,
 
       mapProfileToUser: (profile: any) => {
         return {

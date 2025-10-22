@@ -25,7 +25,7 @@ const region =
 const functionName = config.get("functionName") ?? "cloudbuild-event-forwarder";
 const targetWebhook =
   config.get("targetWebhook") ??
-  "https://localapi.a0.run/__/v1/deployments/gcp/events";
+  "https://localapi.riverly.tech/__/v1/deployments/gcp/events";
 const targetWebhookUsername = config.get("targetWebhookUsername") ?? "a0runner";
 const targetWebhookPassword =
   config.getSecret("targetWebhookPassword") ?? pulumi.secret("VeryS3Cure");

@@ -555,11 +555,11 @@ function isGrpcNotFoundError(error: unknown): boolean {
 }
 
 function resolveCallbackBaseUrl(): string {
-  const apiBase = process.env.A0_API_BASEURL || "https://api.a0.run";
+  const apiBase = process.env.A0_API_BASEURL || "https://api.riverly.tech";
   if (process.env.NODE_ENV === "production") {
     return apiBase;
   }
-  return "https://localapi.a0.run";
+  return "https://localapi.riverly.tech";
 }
 ```
 
