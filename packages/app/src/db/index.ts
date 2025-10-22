@@ -69,6 +69,10 @@ export namespace Database {
     effects: (() => void | Promise<void>)[];
   }>();
 
+  export function raw() {
+    return client();
+  }
+
   export async function use<T>(callback: (trx: TxOrDb) => Promise<T>) {
     try {
       const { tx } = TransactionContext.use();

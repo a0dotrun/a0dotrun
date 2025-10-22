@@ -62,23 +62,9 @@ export const authConfig = {
   },
 } as const
 
-// Create a wrapper that exposes Database.use for the drizzle adapter
-const createDatabaseWrapper = () => {
-  return new Proxy({} as any, {
-    get(_target, prop) {
-      // Intercept all method calls and route through Database.use
-      return (...args: Array<any>) => {
-        return Database.use(async (db: any) => {
-          return await db[prop](...args)
-        })
-      }
-    },
-  })
-}
-
 const auth: ReturnType<typeof betterAuth> = betterAuth({
   ...authConfig,
-  database: drizzleAdapter(createDatabaseWrapper(), {
+  database: drizzleAdapter(Database.raw(), {
     provider: 'pg',
     schema: {
       user: users,

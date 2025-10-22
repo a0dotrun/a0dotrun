@@ -27,11 +27,6 @@ export const env = createEnv({
     ELECTRIC_SYNC_BASEURL: z.url(),
   },
 
-  clientPrefix: "VITE_",
-  client: {
-    VITE_PUBLIC_BASE_URL: z.string().min(1),
-  },
-
   runtimeEnv: process.env,
   emptyStringAsUndefined: true,
 });
