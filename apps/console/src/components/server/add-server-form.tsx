@@ -1,3 +1,9 @@
+import { zodResolver } from '@hookform/resolvers/zod'
+import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import { CircleAlert } from 'lucide-react'
+import { useForm } from 'react-hook-form'
+import { useNavigate } from '@tanstack/react-router'
+import type z from 'zod/v4'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {
@@ -25,14 +31,8 @@ import {
   SelectValue,
 } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
-import { zodResolver } from '@hookform/resolvers/zod'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
-import { CircleAlert } from 'lucide-react'
-import { useForm } from 'react-hook-form'
-import z from 'zod/v4'
 import { NewServerForm } from '@/validations'
 import { addNewServerFn } from '@/funcs'
-import { useNavigate } from '@tanstack/react-router'
 
 type NewServerFormValues = z.infer<typeof NewServerForm>
 

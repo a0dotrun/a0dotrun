@@ -5,7 +5,7 @@
   "exports": {
     ".": "./src/index.ts",
     "./ty": "./src/ty/index.ts",
-    "./config": "./src/config.ts",
+    "./env": "./src/env.ts",
     "./db": "./src/db/index.ts",
     "./db/schema": "./src/db/schema/index.ts",
     "./infra": "./src/infra/index.ts",
@@ -28,7 +28,8 @@
     "ulid": "catalog:",
     "zod": "catalog:",
     "@resonatehq/sdk": "catalog:",
-    "postgres": "catalog:"
+    "postgres": "catalog:",
+    "@t3-oss/env-core": "catalog:"
   },
   "devDependencies": {
     "@types/node": "catalog:"

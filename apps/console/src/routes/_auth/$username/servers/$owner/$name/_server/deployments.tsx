@@ -1,4 +1,4 @@
-import { createFileRoute, Link, Outlet } from '@tanstack/react-router'
+import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 
 export const Route = createFileRoute(
   '/_auth/$username/servers/$owner/$name/_server/deployments',

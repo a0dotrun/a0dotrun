@@ -11,7 +11,7 @@ import { GitHub, Server, ServerDeployment } from "@a0dotrun/app";
 import { DeployWithGitHubRequest } from "@a0dotrun/app/ty";
 import { toAsyncErrorValue } from "@a0dotrun/utils";
 import type { MCPServerConfigTable } from "@a0dotrun/app/db/schema";
-import { a0GitHubAppID } from "@a0dotrun/app/config";
+import { env } from "@a0dotrun/app/env";
 
 const app = new Hono();
 
@@ -162,7 +162,7 @@ app.post(
 
           const ghInstallation = await GitHub.userInstallation({
             userId: session.userId,
-            githubAppId: a0GitHubAppID(),
+            githubAppId: env.GITHUB_APP_ID,
             account: repo.owner,
           });
           if (!ghInstallation) {

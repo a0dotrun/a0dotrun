@@ -10,7 +10,7 @@ import {
   jwks,
   UserType,
 } from "@a0dotrun/app/db/schema";
-import { a0BaseUrl, a0APIBaseUrl } from "@a0dotrun/app/config";
+import { env } from "@a0dotrun/app/env"
 
 export const authConfig = {
   emailAndPassword: {
@@ -74,8 +74,8 @@ const auth: ReturnType<typeof betterAuth> = betterAuth({
   plugins: [
     jwt({
       jwt: {
-        issuer: a0BaseUrl(),
-        audience: a0APIBaseUrl(),
+        issuer: env.BASEURL,
+        audience: env.API_BASEURL,
         expirationTime: "90d",
       },
     }),

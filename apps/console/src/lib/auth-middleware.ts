@@ -1,8 +1,8 @@
 import { createMiddleware } from '@tanstack/react-start'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { authClient } from '@/lib/auth-client'
-import type { BetterAuthSession } from './auth-types'
 import { User } from '@a0dotrun/app'
+import type { BetterAuthSession } from './auth-types'
+import { authClient } from '@/lib/auth-client'
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
   const result = await authClient.getSession({

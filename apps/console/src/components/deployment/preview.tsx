@@ -1,13 +1,13 @@
+import { formatDistanceToNow } from 'date-fns'
+import { CheckCircle, GitCommitHorizontal } from 'lucide-react'
+import { Link } from '@tanstack/react-router'
+import type { DeploymentPreview } from '@a0dotrun/app/ty'
 import { HashDisplay } from '@/components/commons/display-hash'
 import { Card, CardContent } from '@/components/ui/card'
 import {
   deploymentStatusColors,
   getVerboseStatusName,
 } from '@/components/utils'
-import type { DeploymentPreview } from '@a0dotrun/app/ty'
-import { formatDistanceToNow } from 'date-fns'
-import { CheckCircle, GitCommitHorizontal } from 'lucide-react'
-import { Link } from '@tanstack/react-router'
 
 export function DeploymentPreview({
   deployment,
@@ -20,7 +20,10 @@ export function DeploymentPreview({
     <Link
       key={deployment.deploymentId}
       to="/$username/deployments/$deploymentId"
-      params={{ username: deployment.username, deploymentId: deployment.deploymentId }}
+      params={{
+        username: deployment.username,
+        deploymentId: deployment.deploymentId,
+      }}
       className="group focus:outline-none"
       tabIndex={0}
     >

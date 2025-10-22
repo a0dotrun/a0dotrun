@@ -1,4 +1,4 @@
-import { Database, db } from "../db";
+import { Database } from "../db";
 import { eq } from "drizzle-orm";
 import { users, SelectUser, UpdateUser } from "../db/schema";
 import { fn } from "@a0dotrun/utils";
@@ -7,22 +7,21 @@ import z from "zod/v4";
 export namespace User {
   export const fromUsername = fn(z.string(), async (username) =>
     Database.use((db) =>
-      db
-        .transaction(async (tx) => {
-          return tx
-            .select({
-              userId: users.id,
-              username: users.username,
-              image: users.image,
-              name: users.name,
-              createdAt: users.createdAt,
-              updatedAt: users.updatedAt,
-            })
-            .from(users)
-            .where(eq(users.username, username))
-            .execute()
-            .then((rows) => rows[0]);
-        })
+      db.transaction(async (tx) => {
+        return tx
+          .select({
+            userId: users.id,
+            username: users.username,
+            image: users.image,
+            name: users.name,
+            createdAt: users.createdAt,
+            updatedAt: users.updatedAt,
+          })
+          .from(users)
+          .where(eq(users.username, username))
+          .execute()
+          .then((rows) => rows[0]);
+      })
     )
   );
 
@@ -45,15 +44,14 @@ export namespace User {
 
   export const fromID = fn(z.string(), async (id) =>
     Database.use((db) =>
-      db
-        .transaction(async (tx) => {
-          return tx
-            .select()
-            .from(users)
-            .where(eq(users.id, id))
-            .execute()
-            .then((rows) => rows[0]);
-        })
+      db.transaction(async (tx) => {
+        return tx
+          .select()
+          .from(users)
+          .where(eq(users.id, id))
+          .execute()
+          .then((rows) => rows[0]);
+      })
     )
   );
 

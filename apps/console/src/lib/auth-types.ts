@@ -5,8 +5,7 @@
  *  - Your custom `additionalFields` from auth config
  */
 
-import type { authConfig } from './auth'
-import { auth } from './auth'
+import type { auth, authConfig } from './auth'
 
 /**
  * Extracts the `additionalFields` object from your Better Auth config.

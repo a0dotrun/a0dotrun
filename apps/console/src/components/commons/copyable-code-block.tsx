@@ -1,4 +1,4 @@
-"use client"
+'use client'
 
 import { useCopyToClipboard } from '@uidotdev/usehooks'
 import { CheckCheck, Copy } from 'lucide-react'

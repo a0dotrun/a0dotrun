@@ -8,9 +8,8 @@ import { TanStackDevtools } from '@tanstack/react-devtools'
 
 import TanStackQueryDevtools from '../integrations/tanstack-query/devtools'
 
-import appCss from '@/styles/app.css?url'
-
 import type { QueryClient } from '@tanstack/react-query'
+import appCss from '@/styles/app.css?url'
 
 interface MyRouterContext {
   queryClient: QueryClient

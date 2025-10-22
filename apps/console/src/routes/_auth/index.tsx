@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { Button } from '@/components/ui/button'
 import {
@@ -32,8 +32,7 @@ export const Route = createFileRoute('/_auth/')({
 function App() {
   const { sessionUser } = Route.useRouteContext()
   const username = sessionUser.username
-  const avatarUrl =
-    sessionUser.image ?? `https://avatar.vercel.sh/${username}`
+  const avatarUrl = sessionUser.image ?? `https://avatar.vercel.sh/${username}`
   const teams = [
     {
       username,

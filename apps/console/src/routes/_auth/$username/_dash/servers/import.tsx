@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
+import { AlertCircleIcon, GitBranch } from 'lucide-react'
 import { Card, CardContent, CardHeader } from '@/components/ui/card'
 import { GitHubIcon } from '@/components/icons/icons'
-import { AlertCircleIcon, GitBranch } from 'lucide-react'
 import { Alert, AlertDescription } from '@/components/ui/alert'
 import { githubRepoDetailFn, githubUserInstallationFn } from '@/funcs'
 import { GitHubImportServerForm } from '@/components/server/github-import-server'

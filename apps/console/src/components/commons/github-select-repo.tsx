@@ -1,4 +1,15 @@
 'use client'
+import {
+  AlertCircle,
+  Check,
+  ChevronsUpDown,
+  Globe,
+  Lock,
+  RefreshCw,
+} from 'lucide-react'
+import { useNavigate } from '@tanstack/react-router'
+import * as React from 'react'
+import type { GitHubRepo } from '@a0dotrun/app/ty'
 import { GitHubIcon } from '@/components/icons/icons'
 import { Button } from '@/components/ui/button'
 import {
@@ -19,18 +30,6 @@ import { useGitHubInstalls } from '@/hooks/use-github-installs'
 import { useRepos } from '@/hooks/use-repos'
 
 import { cn } from '@/lib/utils'
-import type { GitHubRepo } from '@a0dotrun/app/ty'
-import {
-  AlertCircle,
-  Check,
-  ChevronsUpDown,
-  Globe,
-  Lock,
-  RefreshCw,
-} from 'lucide-react'
-import { useNavigate } from '@tanstack/react-router'
-
-import * as React from 'react'
 
 export function GitHubSelectRepo({ username }: { username: string }) {
   const navigate = useNavigate()

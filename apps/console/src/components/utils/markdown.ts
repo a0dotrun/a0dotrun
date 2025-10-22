@@ -6,9 +6,7 @@ import remarkRehype from 'remark-rehype'
 import rehypeStringify from 'rehype-stringify'
 import { visit } from 'unist-util-visit'
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 const preprocessor = () => (tree: any) => {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   visit(tree, (node: any) => {
     if (node?.type === 'element' && node?.tagName === 'pre') {
       node.properties.class = 'p-4 rounded-lg'

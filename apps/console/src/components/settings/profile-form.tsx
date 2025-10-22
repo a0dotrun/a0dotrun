@@ -1,6 +1,6 @@
-import z from 'zod/v4'
 import { useForm } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
+import type z from 'zod/v4'
 import { Input } from '@/components/ui/input'
 import { Button } from '@/components/ui/button'
 import {

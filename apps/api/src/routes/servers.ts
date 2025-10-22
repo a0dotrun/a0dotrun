@@ -6,7 +6,7 @@ import { verifyBetterAuthToken } from "../middlewares/middlewares";
 import { ErrorCode } from "./errors";
 import { Server } from "@a0dotrun/app";
 import { z } from "zod";
-import { a0GitHubAppID } from "@a0dotrun/app/config";
+import { env } from "@a0dotrun/app/env";
 
 const app = new Hono();
 
@@ -75,7 +75,7 @@ app.post(
       const result = await Server.importFromGitHub({
         ...baseRequest,
         repoUrl: body.repoUrl as string,
-        githubAppId: a0GitHubAppID(),
+        githubAppId: env.GITHUB_APP_ID,
       });
       return c.json({
         serverId: result.serverId,

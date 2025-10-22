@@ -1,12 +1,12 @@
-import { createFileRoute, notFound, Link } from '@tanstack/react-router'
+import { Link, createFileRoute, notFound } from '@tanstack/react-router'
+import { Globe, Rocket, Scale } from 'lucide-react'
+import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
 import { CopyableCodeBlock } from '@/components/commons/copyable-code-block'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ExplorePlatform } from '@/components/dash/explore-platform'
 import { getServerConfigFn, getServerFromNameFn } from '@/funcs'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { Globe, Rocket, Scale } from 'lucide-react'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
 import { GitHubIcon } from '@/components/icons/icons'
 
 export const Route = createFileRoute(

@@ -3,7 +3,7 @@ import type { GitHubRepo } from '@a0dotrun/app/ty'
 
 const fetcher = (
   ...args: [RequestInfo, RequestInit?]
-): Promise<{ repos: GitHubRepo[]; isInstalled: boolean }> =>
+): Promise<{ repos: Array<GitHubRepo>; isInstalled: boolean }> =>
   fetch(...args).then((res) => res.json())
 
 export function useRepos(owner?: string) {

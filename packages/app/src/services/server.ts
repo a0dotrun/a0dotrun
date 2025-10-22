@@ -4,7 +4,7 @@ import { and, desc, eq, or, sql } from "drizzle-orm";
 import { ulid } from "ulid";
 import z from "zod/v4";
 import { defaultAvatarUrl, parseRepoUrl } from "./helpers";
-import { serverHomepage } from "../config";
+import { env } from "../env";
 import { Database, db } from "../db";
 import {
   AddServer,
@@ -23,8 +23,11 @@ import {
 import { ServerModeEnum, ServerVisibility, ServerVisibilityEnum } from "../ty";
 import { GitHub } from "./github";
 
-const withDatabase = <T>(callback: () => Promise<T>) =>
-  Database.use(callback);
+const withDatabase = <T>(callback: () => Promise<T>) => Database.use(callback);
+
+export function serverHomepage(username: string, name: string) {
+  return `https://${env.BASEURL}/servers/${username}/${name}`;
+}
 
 export const ServerAddError = NamedError.create(
   "ServerAddError",
@@ -48,39 +51,39 @@ export namespace Server {
       withDatabase(() =>
         db
           .select({
-          serverId: serverTable.serverId,
-          name: serverTable.name,
-          username: serverTable.username,
-          title: serverTable.title,
-          description: serverTable.description,
-          isClaimed: serverTable.isClaimed,
-          repository: serverTable.githubRepo,
-          avatarUrl: serverTable.avatarUrl,
-          usageCount: serverTable.usageCount,
-          visibility: serverTable.visibility,
-          mode: serverTable.mode,
-          homepage: serverTable.homepage,
-          license: serverTable.license,
-          readme: serverTable.readme,
-        })
-        .from(serverTable)
-        .innerJoin(
-          serverCollectionTable,
-          eq(serverTable.serverId, serverCollectionTable.serverId)
-        )
-        .innerJoin(
-          collectionTable,
-          eq(serverCollectionTable.collectionId, collectionTable.collectionId)
-        )
-        .where(
-          and(
-            eq(collectionTable.name, filter.name),
-            eq(serverTable.visibility, ServerVisibilityEnum.PUBLIC),
-            eq(serverTable.mode, ServerModeEnum.REMOTE)
+            serverId: serverTable.serverId,
+            name: serverTable.name,
+            username: serverTable.username,
+            title: serverTable.title,
+            description: serverTable.description,
+            isClaimed: serverTable.isClaimed,
+            repository: serverTable.githubRepo,
+            avatarUrl: serverTable.avatarUrl,
+            usageCount: serverTable.usageCount,
+            visibility: serverTable.visibility,
+            mode: serverTable.mode,
+            homepage: serverTable.homepage,
+            license: serverTable.license,
+            readme: serverTable.readme,
+          })
+          .from(serverTable)
+          .innerJoin(
+            serverCollectionTable,
+            eq(serverTable.serverId, serverCollectionTable.serverId)
           )
-        )
-        .orderBy(desc(serverTable.usageCount))
-        .limit(filter.limit)
+          .innerJoin(
+            collectionTable,
+            eq(serverCollectionTable.collectionId, collectionTable.collectionId)
+          )
+          .where(
+            and(
+              eq(collectionTable.name, filter.name),
+              eq(serverTable.visibility, ServerVisibilityEnum.PUBLIC),
+              eq(serverTable.mode, ServerModeEnum.REMOTE)
+            )
+          )
+          .orderBy(desc(serverTable.usageCount))
+          .limit(filter.limit)
       )
   );
 
@@ -94,38 +97,38 @@ export namespace Server {
       withDatabase(async () => {
         const result = await db
           .select({
-          serverId: serverTable.serverId,
-          name: serverTable.name,
-          username: serverTable.username,
-          title: serverTable.title,
-          description: serverTable.description,
-          isClaimed: serverTable.isClaimed,
-          repository: serverTable.githubRepo,
-          avatarUrl: serverTable.avatarUrl,
-          usageCount: serverTable.usageCount,
-          visibility: serverTable.visibility,
-          mode: serverTable.mode,
-          homepage: serverTable.homepage,
-          owner: {
-            username: users.username,
-            userId: users.id,
-            name: users.name,
-            image: users.image,
-            isStaff: users.isStaff,
-            isBlocked: users.isBlocked,
-          },
-          license: serverTable.license,
-          readme: serverTable.readme,
-        })
-        .from(serverTable)
-        .innerJoin(users, eq(users.id, serverTable.userId))
-        .where(
-          and(
-            eq(serverTable.username, filter.username),
-            eq(serverTable.name, filter.name)
+            serverId: serverTable.serverId,
+            name: serverTable.name,
+            username: serverTable.username,
+            title: serverTable.title,
+            description: serverTable.description,
+            isClaimed: serverTable.isClaimed,
+            repository: serverTable.githubRepo,
+            avatarUrl: serverTable.avatarUrl,
+            usageCount: serverTable.usageCount,
+            visibility: serverTable.visibility,
+            mode: serverTable.mode,
+            homepage: serverTable.homepage,
+            owner: {
+              username: users.username,
+              userId: users.id,
+              name: users.name,
+              image: users.image,
+              isStaff: users.isStaff,
+              isBlocked: users.isBlocked,
+            },
+            license: serverTable.license,
+            readme: serverTable.readme,
+          })
+          .from(serverTable)
+          .innerJoin(users, eq(users.id, serverTable.userId))
+          .where(
+            and(
+              eq(serverTable.username, filter.username),
+              eq(serverTable.name, filter.name)
+            )
           )
-        )
-        .execute()
+          .execute()
           .then((row) => row[0]);
         if (!result) return result;
         // check for visibility, if private then check ownership,
@@ -145,40 +148,40 @@ export namespace Server {
       withDatabase(() =>
         db
           .select({
-          serverId: serverTable.serverId,
-          name: serverTable.name,
-          username: serverTable.username,
-          title: serverTable.title,
-          description: serverTable.description,
-          isClaimed: serverTable.isClaimed,
-          repository: serverTable.githubRepo,
-          avatarUrl: serverTable.avatarUrl,
-          usageCount: serverTable.usageCount,
-          visibility: serverTable.visibility,
-          mode: serverTable.mode,
-          homepage: serverTable.homepage,
-          owner: {
-            username: users.username,
-            userId: users.id,
-            name: users.name,
-            image: users.image,
-            isStaff: users.isStaff,
-            isBlocked: users.isBlocked,
-          },
-          license: serverTable.license,
-          readme: serverTable.readme,
-        })
-        .from(serverTable)
-        .innerJoin(users, eq(users.id, serverTable.userId))
-        .where(
-          and(
-            eq(serverTable.username, filter.username),
-            eq(serverTable.name, filter.name),
-            eq(serverTable.visibility, ServerVisibilityEnum.PUBLIC)
+            serverId: serverTable.serverId,
+            name: serverTable.name,
+            username: serverTable.username,
+            title: serverTable.title,
+            description: serverTable.description,
+            isClaimed: serverTable.isClaimed,
+            repository: serverTable.githubRepo,
+            avatarUrl: serverTable.avatarUrl,
+            usageCount: serverTable.usageCount,
+            visibility: serverTable.visibility,
+            mode: serverTable.mode,
+            homepage: serverTable.homepage,
+            owner: {
+              username: users.username,
+              userId: users.id,
+              name: users.name,
+              image: users.image,
+              isStaff: users.isStaff,
+              isBlocked: users.isBlocked,
+            },
+            license: serverTable.license,
+            readme: serverTable.readme,
+          })
+          .from(serverTable)
+          .innerJoin(users, eq(users.id, serverTable.userId))
+          .where(
+            and(
+              eq(serverTable.username, filter.username),
+              eq(serverTable.name, filter.name),
+              eq(serverTable.visibility, ServerVisibilityEnum.PUBLIC)
+            )
           )
-        )
-        .execute()
-        .then((row) => row[0])
+          .execute()
+          .then((row) => row[0])
       )
   );
 

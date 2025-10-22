@@ -5,13 +5,14 @@
   "scripts": {
     "dev": "vite dev --port 4173",
     "preview": "vite preview",
-    "build": "vite build --mode production",
+    "build": "vite build --mode production && tsc --noEmit",
     "deploy": "vite build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "test": "vitest run",
-    "lint": "eslint",
-    "format": "prettier",
-    "check": "prettier --write . && eslint --fix"
+    "lint": "eslint .",
+    "format": "prettier --check .",
+    "format:fix": "prettier --write .",
+    "check": "prettier --write . && eslint --fix ."
   },
   "dependencies": {
     "@a0dotrun/app": "workspace:*",
@@ -34,7 +35,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
-    "@t3-oss/env-core": "^0.13.8",
+    "@t3-oss/env-core": "catalog:",
     "@tailwindcss/postcss": "^4.1.15",
     "@tailwindcss/vite": "^4.1.15",
     "@tanstack/react-devtools": "^0.7.7",
@@ -89,6 +90,7 @@
     "vite": "^7.1.11",
     "vitest": "^3.2.4",
     "web-vitals": "^5.1.0",
-    "wrangler": "^4.44.0"
+    "wrangler": "^4.44.0",
+    "eslint": "^9.38.0"
   }
 }

@@ -1,5 +1,5 @@
+import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { getServerFromNameFn } from '@/funcs'
-import { createFileRoute, notFound, Link } from '@tanstack/react-router'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
 import { GitHubDeployServerForm } from '@/components/deployment/deploy-server-form'
 

@@ -1,20 +1,20 @@
-import { Card } from '@/components/ui/card'
-import { Badge } from '@/components/ui/badge'
-import type { UserDeploymentDetail } from '@a0dotrun/app/ty'
 import {
   ArrowUpCircle,
+  CheckCheck,
   Circle,
+  Copy,
   GitBranch,
   GitCommitHorizontal,
   Hammer,
-  Copy,
-  CheckCheck,
 } from 'lucide-react'
 import { format } from 'date-fns'
-import type { ReactNode } from 'react'
 import { Link } from '@tanstack/react-router'
-import { HashDisplay } from '@/components/commons/display-hash'
 import { useCopyToClipboard } from '@uidotdev/usehooks'
+import type { ReactNode } from 'react'
+import type { UserDeploymentDetail } from '@a0dotrun/app/ty'
+import { HashDisplay } from '@/components/commons/display-hash'
+import { Badge } from '@/components/ui/badge'
+import { Card } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 
 export function DeploymentDetail({

@@ -7,15 +7,15 @@ import { Database, db } from "../db";
 import { type GitHubAccountType, gitHubInstallationTable } from "../db/schema";
 import { GitHubInstallationSetup } from "../ty";
 import { type ServerReadme } from "../ty";
-import { a0GitHubAppID, a0GitHubPrivateKeyBase64 } from "../config";
+import { env } from "../env";
 
 let ghApp: GhApp | undefined;
 
 function getGhApp() {
   if (!ghApp) {
     ghApp = new GhApp({
-      appId: a0GitHubAppID(),
-      privateKey: Buffer.from(a0GitHubPrivateKeyBase64, "base64").toString(
+      appId: env.GITHUB_APP_ID,
+      privateKey: Buffer.from(env.GITHUB_PRIVATE_KEY_BASE64, "base64").toString(
         "utf8"
       ),
     });
@@ -193,18 +193,6 @@ export namespace GitHub {
         repo: q.repo,
       });
       const { owner } = data;
-      const dd = {
-        id: data.id,
-        name: data.name,
-        fullName: data.full_name,
-        private: data.private,
-        defaultBranch: data.default_branch,
-        htmlUrl: data.html_url,
-        cloneUrl: data.clone_url,
-        permissions: data.permissions,
-        license: data.license,
-        owner,
-      };
       return {
         id: data.id,
         name: data.name,

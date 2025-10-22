@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { auth } from '@/lib/auth'
-import type { BetterAuthSession } from '@/lib/auth-types'
-import { a0ElectricSyncBaseUrl } from '@a0dotrun/app/config'
+import { env } from '@a0dotrun/app/env'
 import { Database } from '@a0dotrun/app/db'
 import axios from 'axios'
+import type { BetterAuthSession } from '@/lib/auth-types'
+import { auth } from '@/lib/auth'
 
 export const Route = createFileRoute('/api/sync/v1')({
   server: {
@@ -22,7 +22,7 @@ export const Route = createFileRoute('/api/sync/v1')({
               { status: 401 },
             )
           const requestUrl = new URL(request.url)
-          const electricUrl = new URL(`${a0ElectricSyncBaseUrl()}/v1/shape`)
+          const electricUrl = new URL(`${env.ELECTRIC_SYNC_BASEURL}/v1/shape`)
           const params = new URLSearchParams()
           requestUrl.searchParams.forEach((value, key) => {
             if (

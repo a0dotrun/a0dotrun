@@ -1,12 +1,12 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { auth } from '@/lib/auth'
-import { BetterAuthSession } from '@/lib/auth-types'
 import { GitHub, User } from '@a0dotrun/app'
 import { Database } from '@a0dotrun/app/db'
-import { UserTable } from '@a0dotrun/app/db/schema'
 import { GitHubInstallationSetupValue } from '@a0dotrun/app/ty'
 import { z } from 'zod'
-import { a0GitHubAppID } from '@a0dotrun/app/config'
+import { env } from '@a0dotrun/app/env'
+import type { UserTable } from '@a0dotrun/app/db/schema'
+import type { BetterAuthSession } from '@/lib/auth-types'
+import { auth } from '@/lib/auth'
 
 const callbackSearchSchema = z.object({
   installationId: z.number(),
@@ -51,7 +51,7 @@ export const Route = createFileRoute('/api/github/callback')({
 
             await GitHub.upsertApp({
               userId: sessionUser.userId,
-              githubAppId: a0GitHubAppID(),
+              githubAppId: env.GITHUB_APP_ID,
               githubInstallationId: validatedParams.installationId,
               setupAction: validatedParams.setupAction,
               accountId: installationDetails.accountId,

@@ -1,17 +1,17 @@
 import { createServerFn } from '@tanstack/react-start'
 import {
-  ServerTracker,
-  ServerDeployment,
-  Server,
   GitHub,
+  Server,
+  ServerDeployment,
+  ServerTracker,
   User,
 } from '@a0dotrun/app'
-import type { DeploymentTargetType, ServerVisibility } from '@a0dotrun/app/ty'
-import { a0GitHubAppID } from '@a0dotrun/app/config'
-import { NewServerForm, ProfileEditForm, GitHubImportForm } from '@/validations'
-import { authMiddleware } from '@/lib/auth-middleware'
+import { env } from '@a0dotrun/app/env'
 import z from 'zod/v4'
-import { GitHubImportServer } from '@a0dotrun/app/db/schema'
+import type { DeploymentTargetType, ServerVisibility } from '@a0dotrun/app/ty'
+import type { GitHubImportServer } from '@a0dotrun/app/db/schema'
+import { GitHubImportForm, NewServerForm, ProfileEditForm } from '@/validations'
+import { authMiddleware } from '@/lib/auth-middleware'
 
 export const activeServerCountFn = createServerFn({ method: 'GET' })
   .inputValidator((data: { userId: string }) => data)
@@ -101,7 +101,7 @@ export const githubUserInstallationFn = createServerFn({ method: 'GET' })
   .handler(async ({ data }) => {
     return GitHub.userInstallation({
       userId: data.userId,
-      githubAppId: a0GitHubAppID(),
+      githubAppId: env.GITHUB_APP_ID,
       account: data.account,
     })
   })
@@ -182,7 +182,7 @@ export const userGitHubInstallationFn = createServerFn({ method: 'GET' })
 
     const response = await GitHub.userInstallation({
       userId: sessionUser.userId,
-      githubAppId: a0GitHubAppID(),
+      githubAppId: env.GITHUB_APP_ID,
       account: sessionUser.username,
     })
     return response
@@ -206,7 +206,7 @@ export const importServerFromGitHub = createServerFn({ method: 'POST' })
     }
     const response = await Server.importFromGitHub({
       ...request,
-      githubAppId: a0GitHubAppID(),
+      githubAppId: env.GITHUB_APP_ID,
     })
     return {
       serverId: response.serverId,

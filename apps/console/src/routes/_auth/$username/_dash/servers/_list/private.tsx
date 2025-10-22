@@ -32,9 +32,7 @@ function RouteComponent() {
           />
         ))
       ) : (
-        <div className="text-muted-foreground">
-          No private servers found.
-        </div>
+        <div className="text-muted-foreground">No private servers found.</div>
       )}
     </div>
   )

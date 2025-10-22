@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { auth } from '@/lib/auth'
-import type { BetterAuthSession } from '@/lib/auth-types'
 import { GitHub } from '@a0dotrun/app'
 import { Database } from '@a0dotrun/app/db'
-import { a0GitHubAppID } from '@a0dotrun/app/config'
+import { env } from '@a0dotrun/app/env'
+import type { BetterAuthSession } from '@/lib/auth-types'
+import { auth } from '@/lib/auth'
 
 export const Route = createFileRoute('/api/github/installs')({
   server: {
@@ -18,7 +18,7 @@ export const Route = createFileRoute('/api/github/installs')({
 
           const installs = await GitHub.userInstalls({
             userId: session.user.id,
-            githubAppId: a0GitHubAppID(),
+            githubAppId: env.GITHUB_APP_ID,
           })
 
           return Response.json({

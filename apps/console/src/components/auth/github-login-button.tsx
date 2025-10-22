@@ -1,7 +1,8 @@
+import React from 'react'
+import type { ComponentProps } from 'react'
 import { Button } from '@/components/ui/button'
 import { authClient } from '@/lib/auth-client'
 import { cn } from '@/lib/utils'
-import React, { ComponentProps } from 'react'
 
 interface GitHubLoginButtonProps extends ComponentProps<typeof Button> {
   callbackURL?: string

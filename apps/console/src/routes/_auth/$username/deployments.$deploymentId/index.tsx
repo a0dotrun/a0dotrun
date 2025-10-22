@@ -1,5 +1,5 @@
-import { userDeployment } from '@/funcs'
 import { createFileRoute, notFound } from '@tanstack/react-router'
+import { userDeployment } from '@/funcs'
 import { DeploymentDetail } from '@/components/deployment/detail'
 import { WithClient } from '@/components/commons/with-client'
 import { DeploymentLogs } from '@/components/deployment/deployment-logs'

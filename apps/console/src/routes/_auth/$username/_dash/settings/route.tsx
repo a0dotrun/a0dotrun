@@ -1,4 +1,4 @@
-import { createFileRoute, Outlet, Link } from '@tanstack/react-router'
+import { Link, Outlet, createFileRoute } from '@tanstack/react-router'
 import { Button } from '@/components/ui/button'
 
 export const Route = createFileRoute('/_auth/$username/_dash/settings')({
@@ -7,22 +7,22 @@ export const Route = createFileRoute('/_auth/$username/_dash/settings')({
 
 function RouteComponent() {
   const { username } = Route.useParams()
-  
+
   const settingsLinks = [
     {
       id: 1,
-      to: "/$username/settings",
-      name: "General",
+      to: '/$username/settings',
+      name: 'General',
     },
     {
       id: 2,
-      to: "/$username/settings/github",
-      name: "GitHub",
+      to: '/$username/settings/github',
+      name: 'GitHub',
     },
     {
       id: 3,
-      to: "/$username/settings/webhooks",
-      name: "Webhooks",
+      to: '/$username/settings/webhooks',
+      name: 'Webhooks',
     },
   ]
 
@@ -47,7 +47,7 @@ function RouteComponent() {
                     to={link.to}
                     params={{ username }}
                     activeProps={{
-                      className: "bg-accent",
+                      className: 'bg-accent',
                     }}
                     activeOptions={{
                       exact: true,

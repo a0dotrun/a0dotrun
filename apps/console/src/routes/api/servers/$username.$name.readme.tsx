@@ -1,11 +1,11 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { auth } from '@/lib/auth'
-import type { BetterAuthSession } from '@/lib/auth-types'
 import { Server, User } from '@a0dotrun/app'
 import { Database } from '@a0dotrun/app/db'
-import type { UserTable } from '@a0dotrun/app/db/schema'
 import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import type { UserTable } from '@a0dotrun/app/db/schema'
+import type { BetterAuthSession } from '@/lib/auth-types'
+import { auth } from '@/lib/auth'
 
 export const Route = createFileRoute('/api/servers/$username/$name/readme')({
   server: {
@@ -18,18 +18,12 @@ export const Route = createFileRoute('/api/servers/$username/$name/readme')({
           if (!session) return Response.redirect(new URL('/login', request.url))
 
           const { username, name } = params
-          let server
 
-          if (!session) {
-            server = await Server.publicServer({ username, name })
-          } else {
-            const sessionUser = User.toSession(session.user as UserTable)
-            server = await Server.fromName({
-              callerUserId: sessionUser.userId,
-              username,
-              name,
-            })
-          }
+          const server = await Server.fromName({
+            callerUserId: session.user.id,
+            username,
+            name,
+          })
 
           if (!server) {
             return Response.json(

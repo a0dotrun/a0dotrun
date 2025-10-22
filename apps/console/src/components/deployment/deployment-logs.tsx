@@ -1,13 +1,13 @@
 'use client'
 
 import { useShape } from '@electric-sql/react'
-import { ShapeStreamOptions } from '@electric-sql/client/'
+import * as motion from 'motion/react-client'
+import type { ShapeStreamOptions } from '@electric-sql/client/'
 import type { LogRow } from '@/sync/shapes'
 import { toDeploymentLogShape } from '@/sync/shapes'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { Skeleton } from '@/components/ui/skeleton'
 import { Alert, AlertDescription } from '@/components/ui/alert'
-import * as motion from 'motion/react-client'
 
 const logShape = (userId: string, deploymentId: string): ShapeStreamOptions => {
   if (typeof window !== `undefined`) {

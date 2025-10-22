@@ -1,14 +1,13 @@
-import { createFileRoute } from '@tanstack/react-router'
+import { Link, createFileRoute } from '@tanstack/react-router'
 import { ExplorePlatform } from '@/components/dash/explore-platform'
 import {
   activeServerCountFn,
-  topUsedServersFn,
-  recentlyViewedServersFn,
   deploymentsFn,
+  recentlyViewedServersFn,
+  topUsedServersFn,
 } from '@/funcs'
 import { Button } from '@/components/ui/button'
 import { DeploymentPreview } from '@/components/deployment/preview'
-import { Link } from '@tanstack/react-router'
 import { Card, CardContent } from '@/components/ui/card'
 import { GitHubSelectRepo } from '@/components/commons/github-select-repo'
 
