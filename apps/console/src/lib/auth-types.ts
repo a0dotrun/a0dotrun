@@ -63,7 +63,9 @@ export type AuthUser = MapFields<AdditionalFields>
  * The built-in Better Auth session type (when a session exists).
  * `getSession()` can return `null`, so we wrap it in `NonNullable` here.
  */
-type BaseSession = NonNullable<Awaited<ReturnType<typeof auth.api.getSession>>>
+type BaseSession = NonNullable<
+  Awaited<ReturnType<ReturnType<typeof auth>['api']['getSession']>>
+>
 
 /**
  * Merge built-in Better Auth `user` type with your custom `AuthUser` fields.
@@ -76,7 +78,7 @@ type CustomUser = BaseSession['user'] & AuthUser
 /**
  * Final session type that you can use for:
  * ```ts
- * const session = (await auth.api.getSession(...)) as CustomBetterAuthSession | null;
+ * const session = (await auth(env).api.getSession(...)) as CustomBetterAuthSession | null;
  * ```
  */
 export type BetterAuthSession = Omit<BaseSession, 'user'> & {

@@ -1,10 +1,9 @@
-// export * from "@a0dotrun/app/auth"
-
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
 import { jwt } from 'better-auth/plugins'
 import { reactStartCookies } from 'better-auth/react-start'
-import { Database } from '@a0dotrun/app/db'
+import postgres from 'postgres'
+import { drizzle } from 'drizzle-orm/postgres-js'
 import {
   UserType,
   accounts,
@@ -13,7 +12,7 @@ import {
   users,
   verifications,
 } from '@a0dotrun/app/db/schema'
-import { env } from '@a0dotrun/app/env'
+import { env, type Env } from '@a0dotrun/app/env'
 
 export const authConfig = {
   emailAndPassword: {
@@ -62,28 +61,60 @@ export const authConfig = {
   },
 } as const
 
-const auth: ReturnType<typeof betterAuth> = betterAuth({
-  ...authConfig,
-  database: drizzleAdapter(Database.db(), {
-    provider: 'pg',
-    schema: {
-      user: users,
-      session: sessions,
-      account: accounts,
-      verification: verifications,
-      jwks: jwks,
-    },
-  }),
-  plugins: [
-    jwt({
-      jwt: {
-        issuer: env.BASEURL,
-        audience: env.API_BASEURL,
-        expirationTime: '90d',
+// const auth: ReturnType<typeof betterAuth> = betterAuth({
+//   appName: 'Riverly',
+//   ...authConfig,
+//   database: drizzleAdapter(Database.db(), {
+//     provider: 'pg',
+//     schema: {
+//       user: users,
+//       session: sessions,
+//       account: accounts,
+//       verification: verifications,
+//       jwks: jwks,
+//     },
+//   }),
+//   plugins: [
+//     jwt({
+//       jwt: {
+//         issuer: env.BASEURL,
+//         audience: env.API_BASEURL,
+//         expirationTime: '90d',
+//       },
+//     }),
+//     reactStartCookies(),
+//   ], // make sure this is the last plugin in the array
+// })
+
+export const auth = (env: Env): ReturnType<typeof betterAuth> => {
+  const result = postgres(env.DATABASE_URL)
+  const db = drizzle(result, { casing: 'snake_case' })
+  return betterAuth({
+    appName: 'Riverly',
+    ...authConfig,
+    database: drizzleAdapter(db, {
+      provider: 'pg',
+      schema: {
+        user: users,
+        session: sessions,
+        account: accounts,
+        verification: verifications,
+        jwks: jwks,
       },
     }),
-    reactStartCookies(),
-  ], // make sure this is the last plugin in the array
-})
+    plugins: [
+      jwt({
+        jwt: {
+          issuer: env.BASEURL,
+          audience: env.API_BASEURL,
+          expirationTime: '90d',
+        },
+      }),
+      reactStartCookies(),
+    ], // make sure this is the last plugin in the array
+  })
+}
 
-export { auth }
+export type AuthInstance = ReturnType<typeof auth>
+
+// export { auth }

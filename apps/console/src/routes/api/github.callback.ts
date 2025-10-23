@@ -32,7 +32,7 @@ export const Route = createFileRoute('/api/github/callback')({
         }
 
         try {
-          const session = (await auth.api.getSession({
+          const session = (await auth(env).api.getSession({
             headers: request.headers,
           })) as BetterAuthSession | null
 

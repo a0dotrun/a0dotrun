@@ -26,7 +26,6 @@ import {
   RevisionStatusValue,
   TriggerType,
   triggerTypeSchema,
-  TriggerTypeValue,
 } from "../../ty";
 import { serverInstallTable, serverTable } from "./server";
 import { users } from "./users";

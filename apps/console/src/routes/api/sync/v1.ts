@@ -9,7 +9,7 @@ export const Route = createFileRoute('/api/sync/v1')({
   server: {
     handlers: {
       GET: async ({ request }) => {
-        const session = (await auth.api.getSession({
+        const session = (await auth(env).api.getSession({
           headers: getRequestHeaders(),
         })) as BetterAuthSession | null
         if (!session)

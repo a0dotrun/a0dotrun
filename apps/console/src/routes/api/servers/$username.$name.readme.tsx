@@ -4,12 +4,13 @@ import { Server } from '@a0dotrun/app'
 import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
 import type { BetterAuthSession } from '@/lib/auth-types'
 import { auth } from '@/lib/auth'
+import { env } from '@a0dotrun/app/env'
 
 export const Route = createFileRoute('/api/servers/$username/$name/readme')({
   server: {
     handlers: {
       GET: async ({ request, params }) => {
-        const session = (await auth.api.getSession({
+        const session = (await auth(env).api.getSession({
           headers: getRequestHeaders(),
         })) as BetterAuthSession | null
         if (!session) return Response.redirect(new URL('/login', request.url))

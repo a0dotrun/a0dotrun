@@ -23,7 +23,7 @@ export const Route = createFileRoute('/_auth/$username/_dash/servers/import')({
     owner,
   }),
   loader: async ({ deps, context: { sessionUser } }) => {
-    let repo = null
+    let repo: Awaited<ReturnType<typeof githubRepoDetailFn>> | null = null
     const owner = deps.owner || sessionUser.username
     const name = deps.name
     try {
