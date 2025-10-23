@@ -10,7 +10,7 @@ import {
 import { createSchemaFactory } from "drizzle-zod";
 import { ulid } from "ulid";
 import z from "zod/v4";
-import { genId } from "@a0dotrun/utils";
+import { genId } from "@riverly/utils";
 import {
   EnvsSchema,
   ServerConfigSchema,

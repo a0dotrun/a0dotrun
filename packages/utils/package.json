@@ -1,5 +1,5 @@
 {
-  "name": "@a0dotrun/utils",
+  "name": "@riverly/utils",
   "type": "module",
   "scripts": {
     "dev": "tsc --watch",

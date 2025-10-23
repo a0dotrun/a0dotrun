@@ -1,5 +1,5 @@
 {
-  "name": "@a0dotrun/app",
+  "name": "@riverly/app",
   "type": "module",
   "version": "0.0.0",
   "exports": {
@@ -12,7 +12,7 @@
     "./infra/providers/gcp": "./src/infra/providers/gcp/index.ts"
   },
   "dependencies": {
-    "@a0dotrun/utils": "workspace:*",
+    "@riverly/utils": "workspace:*",
     "@google-cloud/cloudbuild": "^5.3.0",
     "@google-cloud/logging": "^11.2.0",
     "@octokit/rest": "catalog:",

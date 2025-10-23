@@ -1,4 +1,4 @@
-import { fn, NamedError } from "@a0dotrun/utils";
+import { fn, NamedError } from "@riverly/utils";
 import { createHash } from "crypto";
 import { and, desc, eq, or, sql } from "drizzle-orm";
 import { ulid } from "ulid";

@@ -1,6 +1,6 @@
 import { zValidator } from "@hono/zod-validator";
-import { ServerDeployment } from "@a0dotrun/app";
-import { InsertDeploymentLog } from "@a0dotrun/app/db/schema";
+import { ServerDeployment } from "@riverly/app";
+import { InsertDeploymentLog } from "@riverly/app/db/schema";
 import { Hono } from "hono";
 import { bearerAuth } from "hono/bearer-auth";
 import { z } from "zod";
@@ -10,9 +10,9 @@ import {
   CloudBuildStatusEnum,
   toDeploymentStatusEnum,
   isTerminalStatus,
-} from "@a0dotrun/app/infra/providers/gcp";
+} from "@riverly/app/infra/providers/gcp";
 import { basicAuth } from "hono/basic-auth";
-import { DeploymentStatusEnum } from "@a0dotrun/app/ty";
+import { DeploymentStatusEnum } from "@riverly/app/ty";
 
 const app = new Hono();
 

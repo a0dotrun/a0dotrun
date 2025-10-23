@@ -9,7 +9,7 @@ import {
 } from 'lucide-react'
 import { useNavigate } from '@tanstack/react-router'
 import * as React from 'react'
-import type { GitHubRepo } from '@a0dotrun/app/ty'
+import type { GitHubRepo } from '@riverly/app/ty'
 import { GitHubIcon } from '@/components/icons/icons'
 import { Button } from '@/components/ui/button'
 import {
@@ -58,7 +58,7 @@ export function GitHubSelectRepo({ username }: { username: string }) {
 
   const handleInstallClick = () => {
     const popup = window.open(
-      'https://github.com/apps/a0dotrun/installations/new',
+      'https://github.com/apps/riverly/installations/new',
       'Installing a0',
       'width=800,height=700,scrollbars=yes,resizable=yes,centerscreen=yes',
     )

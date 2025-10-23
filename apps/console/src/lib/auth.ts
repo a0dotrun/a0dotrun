@@ -11,8 +11,8 @@ import {
   sessions,
   users,
   verifications,
-} from '@a0dotrun/app/db/schema'
-import { env, type Env } from '@a0dotrun/app/env'
+} from '@riverly/app/db/schema'
+import { env, type Env } from '@riverly/app/env'
 
 export const authConfig = {
   emailAndPassword: {
@@ -115,7 +115,7 @@ export const auth = (env: Env): ReturnType<typeof betterAuth> => {
     session: {
       cookieCache: {
         enabled: true,
-        maxAge: 7 * 24 * 60 * 60, // Cache duration in seconds
+        maxAge: 5 * 60,
       },
     },
   })

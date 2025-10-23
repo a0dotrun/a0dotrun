@@ -1,5 +1,5 @@
 {
-  "name": "@a0dotrun/api",
+  "name": "@riverly/api",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -13,8 +13,8 @@
   },
   "dependencies": {
     "hono": "^4.9.6",
-    "@a0dotrun/app": "workspace:*",
-    "@a0dotrun/utils": "workspace:*",
+    "@riverly/app": "workspace:*",
+    "@riverly/utils": "workspace:*",
     "@google-cloud/storage": "^7.17.1",
     "@hono/zod-validator": "^0.7.2",
     "better-auth": "catalog:",

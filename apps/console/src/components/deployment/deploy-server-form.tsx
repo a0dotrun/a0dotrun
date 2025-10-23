@@ -1,7 +1,7 @@
 import { useForm } from 'react-hook-form'
 import z from 'zod/v4'
 import { zodResolver } from '@hookform/resolvers/zod'
-import { DeploymentTarget } from '@a0dotrun/app/ty'
+import { DeploymentTarget } from '@riverly/app/ty'
 import { CircleAlert } from 'lucide-react'
 import {
   Card,

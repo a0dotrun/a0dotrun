@@ -9,6 +9,6 @@ export default defineConfig({
     sourcemap: true,
   },
   ssr: {
-    noExternal: ["@a0dotrun/app", "@a0dotrun/utils"],
+    noExternal: ["@riverly/app", "@riverly/utils"],
   },
 });

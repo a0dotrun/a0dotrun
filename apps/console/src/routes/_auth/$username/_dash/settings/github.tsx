@@ -48,7 +48,7 @@ function RouteComponent() {
                 </span>
               </div>
               <a
-                href="https://github.com/apps/a0dotrun/installations/new"
+                href="https://github.com/apps/riverly/installations/new"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-800 text-sm transition-colors"
@@ -68,7 +68,7 @@ function RouteComponent() {
               className="gap-2 w-full sm:w-auto"
             >
               <a
-                href="https://github.com/apps/a0dotrun/installations/new"
+                href="https://github.com/apps/riverly/installations/new"
                 target="_blank"
                 rel="noopener noreferrer"
               >

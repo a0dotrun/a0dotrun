@@ -1,7 +1,7 @@
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { jwt } from "better-auth/plugins";
-import { Database } from "@a0dotrun/app/db";
+import { Database } from "@riverly/app/db";
 import {
   users,
   sessions,
@@ -9,8 +9,8 @@ import {
   verifications,
   jwks,
   UserType,
-} from "@a0dotrun/app/db/schema";
-import { env } from "@a0dotrun/app/env";
+} from "@riverly/app/db/schema";
+import { env } from "@riverly/app/env";
 
 export const authConfig = {
   emailAndPassword: {

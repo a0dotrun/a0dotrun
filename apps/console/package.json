@@ -15,7 +15,7 @@
     "check": "prettier --write . && eslint --fix ."
   },
   "dependencies": {
-    "@a0dotrun/app": "workspace:*",
+    "@riverly/app": "workspace:*",
     "@electric-sql/client": "^1.0.14",
     "@electric-sql/react": "^1.0.14",
     "@fontsource/ibm-plex-mono": "^5.2.7",

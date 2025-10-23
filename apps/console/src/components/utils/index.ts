@@ -1,5 +1,5 @@
-import { DeploymentStatusEnum } from '@a0dotrun/app/ty'
-import type { DeploymentStatusType } from '@a0dotrun/app/ty'
+import { DeploymentStatusEnum } from '@riverly/app/ty'
+import type { DeploymentStatusType } from '@riverly/app/ty'
 
 export const deploymentStatusColors: Record<DeploymentStatusType, string> = {
   [DeploymentStatusEnum.PENDING]: 'text-gray-500 dark:text-gray-400',

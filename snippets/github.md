@@ -62,7 +62,7 @@ export namespace GitHub {
           Accept: "application/vnd.github.v3+json",
           "Content-Type": "application/json",
           Authorization: `Bearer ${jwt}`,
-          "User-Agent": "a0run",
+          "User-Agent": "riverly",
         },
       }
     );

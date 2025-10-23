@@ -3,13 +3,13 @@ import type { Context } from "@resonatehq/sdk";
 import type {
   GitHubSourceBuilder,
   GitHubSourceDeployer,
-} from "@a0dotrun/app/infra";
+} from "@riverly/app/infra";
 import {
   CloudBuildBuild,
   CloudBuildBuildNDeploy,
   type CloudBuildLogEvent,
   type CloudBuildLogStreamOptions,
-} from "@a0dotrun/app/infra/providers/gcp";
+} from "@riverly/app/infra/providers/gcp";
 
 const resonate = Resonate.remote({
   group: "workers",

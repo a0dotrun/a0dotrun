@@ -49,7 +49,7 @@ export function ExplorePlatform({ className }: { className?: string }) {
         </a>
         {/*  Community */}
         <a
-          href="https://github.com/orgs/a0dotrun/discussions"
+          href="https://github.com/orgs/riverly/discussions"
           target="_blank"
           rel="noopener noreferrer"
           className="flex items-start space-x-4 group cursor-pointer hover:bg-accent p-2 rounded-xl"

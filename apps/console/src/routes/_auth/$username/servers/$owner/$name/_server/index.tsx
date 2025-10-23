@@ -1,6 +1,6 @@
 import { Link, createFileRoute, notFound } from '@tanstack/react-router'
 import { Globe, Rocket, Scale } from 'lucide-react'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import { ServerVisibilityEnum } from '@riverly/app/ty'
 import { CopyableCodeBlock } from '@/components/commons/copyable-code-block'
 import { Button } from '@/components/ui/button'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'

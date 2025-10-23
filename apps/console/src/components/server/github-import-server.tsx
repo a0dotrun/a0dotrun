@@ -1,10 +1,10 @@
 import { zodResolver } from '@hookform/resolvers/zod'
 import { CircleAlert } from 'lucide-react'
 import { useForm } from 'react-hook-form'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import { ServerVisibilityEnum } from '@riverly/app/ty'
 import { useNavigate } from '@tanstack/react-router'
 import type z from 'zod/v4'
-import type { SessionUser } from '@a0dotrun/app/ty'
+import type { SessionUser } from '@riverly/app/ty'
 import { Alert, AlertTitle } from '@/components/ui/alert'
 import { Button } from '@/components/ui/button'
 import {

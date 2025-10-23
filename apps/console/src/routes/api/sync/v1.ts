@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { env } from '@a0dotrun/app/env'
+import { env } from '@riverly/app/env'
 import axios from 'axios'
 import type { BetterAuthSession } from '@/lib/auth-types'
 import { auth } from '@/lib/auth'

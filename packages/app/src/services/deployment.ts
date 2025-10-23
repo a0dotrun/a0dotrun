@@ -26,7 +26,7 @@ import {
 } from "../ty";
 import { UpdateBuildDeploy } from "../db/schema";
 import { GitHubSourceDeployer } from "../infra/ty";
-import { fn, NamedError } from "@a0dotrun/utils";
+import { fn, NamedError } from "@riverly/utils";
 
 // import { getResonateClient } from "../lib/rsc";
 // import { CloudBuildBuildNDeploy } from "../infra/providers/gcp";

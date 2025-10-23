@@ -1,9 +1,9 @@
 import { createFileRoute } from '@tanstack/react-router'
-import { GitHub, User } from '@a0dotrun/app'
-import { GitHubInstallationSetupValue } from '@a0dotrun/app/ty'
+import { GitHub, User } from '@riverly/app'
+import { GitHubInstallationSetupValue } from '@riverly/app/ty'
 import { z } from 'zod'
-import { env } from '@a0dotrun/app/env'
-import type { UserTable } from '@a0dotrun/app/db/schema'
+import { env } from '@riverly/app/env'
+import type { UserTable } from '@riverly/app/db/schema'
 import type { BetterAuthSession } from '@/lib/auth-types'
 import { auth } from '@/lib/auth'
 

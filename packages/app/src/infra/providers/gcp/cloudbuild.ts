@@ -3,7 +3,7 @@ import { Deployer } from "../deployer";
 import { GitHubSourceBuilder, GitHubSourceDeployer } from "../../ty";
 import { gcpCloudBuildConfigSchema, gcpConfigSchema } from "./config";
 import { CloudBuildClient, protos } from "@google-cloud/cloudbuild";
-import { NamedError } from "@a0dotrun/utils";
+import { NamedError } from "@riverly/utils";
 import z from "zod/v4";
 import { CloudBuildStatus, CloudBuildStatusEnum } from "./ty";
 import { Buffer } from "node:buffer";

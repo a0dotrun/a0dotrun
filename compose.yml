@@ -1,7 +1,7 @@
 services:
-  a0db:
+  riverlydb:
     image: postgres:17
-    container_name: a0db
+    container_name: riverlydb
     environment:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
@@ -18,21 +18,21 @@ services:
       - -c
       - wal_level=logical
 
-  electric:
-    container_name: electric
-    image: electricsql/electric:latest
-    restart: always
-    environment:
-      - DATABASE_URL=postgresql://postgres:postgres@a0db:5432/postgres?sslmode=disable
-      - ELECTRIC_PORT=3001
-      - ELECTRIC_ALLOW_SHAPE_DELETION=1
-      - ELECTRIC_INSECURE=true
-    networks:
-      - stack
-    ports:
-      - "3001:3001"
-    depends_on:
-      - a0db
+  # electric:
+  #   container_name: electric
+  #   image: electricsql/electric:latest
+  #   restart: always
+  #   environment:
+  #     - DATABASE_URL=postgresql://postgres:postgres@riverlydb:5432/postgres?sslmode=disable
+  #     - ELECTRIC_PORT=3001
+  #     - ELECTRIC_ALLOW_SHAPE_DELETION=1
+  #     - ELECTRIC_INSECURE=true
+  #   networks:
+  #     - stack
+  #   ports:
+  #     - "3001:3001"
+  #   depends_on:
+  #     - riverlydb
 
 volumes:
   pgdb:

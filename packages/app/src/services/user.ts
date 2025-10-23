@@ -1,7 +1,7 @@
 import { Database } from "../db";
 import { eq } from "drizzle-orm";
 import { users, SelectUser, UpdateUser } from "../db/schema";
-import { fn } from "@a0dotrun/utils";
+import { fn } from "@riverly/utils";
 import z from "zod/v4";
 
 export namespace User {

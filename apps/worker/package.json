@@ -1,5 +1,5 @@
 {
-  "name": "@a0dotrun/worker",
+  "name": "@riverly/worker",
   "version": "0.1.0",
   "private": true,
   "type": "module",
@@ -12,8 +12,8 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@a0dotrun/app": "workspace:*",
-    "@a0dotrun/utils": "workspace:*",
+    "@riverly/app": "workspace:*",
+    "@riverly/utils": "workspace:*",
     "zod": "catalog:",
     "@resonatehq/sdk": "catalog:"
   },

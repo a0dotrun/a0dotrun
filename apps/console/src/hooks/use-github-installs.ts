@@ -1,5 +1,5 @@
 import useSWR from 'swr'
-import type { GitHub } from '@a0dotrun/app'
+import type { GitHub } from '@riverly/app'
 
 const fetcher = (
   ...args: [RequestInfo, RequestInit?]

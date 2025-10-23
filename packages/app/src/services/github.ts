@@ -1,4 +1,4 @@
-import { fn } from "@a0dotrun/utils";
+import { fn } from "@riverly/utils";
 import { and, asc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { App as GhApp } from "octokit";

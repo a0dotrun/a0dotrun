@@ -1,10 +1,10 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { Server } from '@a0dotrun/app'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import { Server } from '@riverly/app'
+import { ServerVisibilityEnum } from '@riverly/app/ty'
 import type { BetterAuthSession } from '@/lib/auth-types'
 import { auth } from '@/lib/auth'
-import { env } from '@a0dotrun/app/env'
+import { env } from '@riverly/app/env'
 
 export const Route = createFileRoute('/api/servers/$username/$name/readme')({
   server: {

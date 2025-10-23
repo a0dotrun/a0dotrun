@@ -50,7 +50,7 @@ function RouteComponent() {
       <div className="max-w-7xl mx-auto">
         <div className="h-20">
           <h1 className="text-2xl mb-2 font-mono font-semibold">
-            Welcome to a0run!
+            Welcome to Riverly!
           </h1>
           <p className="text-muted-foreground text-xs sm:text-sm">
             Give us a shout on Discord or X if you get stuck along the way!

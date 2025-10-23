@@ -1,5 +1,5 @@
 import { zodResolver } from '@hookform/resolvers/zod'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import { ServerVisibilityEnum } from '@riverly/app/ty'
 import { CircleAlert } from 'lucide-react'
 import { useForm } from 'react-hook-form'
 import { useNavigate } from '@tanstack/react-router'

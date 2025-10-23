@@ -5,11 +5,11 @@ import {
   ServerDeployment,
   ServerTracker,
   User,
-} from '@a0dotrun/app'
-import { env } from '@a0dotrun/app/env'
+} from '@riverly/app'
+import { env } from '@riverly/app/env'
 import z from 'zod/v4'
-import type { DeploymentTargetType, ServerVisibility } from '@a0dotrun/app/ty'
-import type { GitHubImportServer } from '@a0dotrun/app/db/schema'
+import type { DeploymentTargetType, ServerVisibility } from '@riverly/app/ty'
+import type { GitHubImportServer } from '@riverly/app/db/schema'
 import { GitHubImportForm, NewServerForm, ProfileEditForm } from '@/validations'
 import { authMiddleware } from '@/lib/auth-middleware'
 import { setResponseStatus } from '@tanstack/react-start/server'

@@ -41,7 +41,7 @@ function RouteComponent() {
         <div className="flex min-w-0 flex-1 items-center gap-2">
           <div className="mr-1">
             <Link to={'/$username'} params={{ username }} className="font-mono">
-              a0run/
+              riverly.
             </Link>
           </div>
         </div>

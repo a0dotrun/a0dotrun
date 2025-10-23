@@ -1,4 +1,4 @@
-import { fn } from "@a0dotrun/utils";
+import { fn } from "@riverly/utils";
 import { and, count, desc, eq, gt } from "drizzle-orm";
 import { Database } from "../db";
 import { serverInstallTable, serverTable, serverViewTable } from "../db/schema";

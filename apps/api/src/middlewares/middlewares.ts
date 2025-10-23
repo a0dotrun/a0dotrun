@@ -1,8 +1,8 @@
 import type { Context } from "hono";
 import { jwtVerify, createRemoteJWKSet } from "jose";
-import { env } from "@a0dotrun/app/env"
+import { env } from "@riverly/app/env"
 import type { JWTVerifiedUser } from "../lib/auth-types";
-import { defaultAvatarUrl } from "@a0dotrun/app";
+import { defaultAvatarUrl } from "@riverly/app";
 
 export async function verifyBetterAuthToken(token: string, c: Context) {
   try {

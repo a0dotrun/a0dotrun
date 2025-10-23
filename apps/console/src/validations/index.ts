@@ -1,5 +1,5 @@
 import z from 'zod/v4'
-import { ServerVisibilityEnum } from '@a0dotrun/app/ty'
+import { ServerVisibilityEnum } from '@riverly/app/ty'
 
 export const NewServerForm = z.object({
   name: z

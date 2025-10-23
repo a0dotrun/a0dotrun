@@ -1,6 +1,6 @@
 import { CheckCircle, Rocket } from 'lucide-react'
 import { Link } from '@tanstack/react-router'
-import type { UserServerView } from '@a0dotrun/app'
+import type { UserServerView } from '@riverly/app'
 import { Card, CardContent, CardFooter } from '@/components/ui/card'
 import { Button } from '@/components/ui/button'
 

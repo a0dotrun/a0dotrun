@@ -1,6 +1,6 @@
 import { Hono } from "hono";
 import { ErrorCodeEnum } from "./errors";
-import { User } from "@a0dotrun/app";
+import { User } from "@riverly/app";
 
 const app = new Hono();
 

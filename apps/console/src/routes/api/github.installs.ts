@@ -1,7 +1,7 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { getRequestHeaders } from '@tanstack/react-start/server'
-import { GitHub } from '@a0dotrun/app'
-import { env } from '@a0dotrun/app/env'
+import { GitHub } from '@riverly/app'
+import { env } from '@riverly/app/env'
 import type { BetterAuthSession } from '@/lib/auth-types'
 import { auth } from '@/lib/auth'
 

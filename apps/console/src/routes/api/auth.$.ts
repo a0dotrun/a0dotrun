@@ -1,6 +1,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { auth } from '@/lib/auth'
-import { env } from '@a0dotrun/app/env'
+import { env } from '@riverly/app/env'
 
 export const Route = createFileRoute('/api/auth/$')({
   server: {
