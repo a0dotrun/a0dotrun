@@ -1,19 +1,43 @@
 import { createMiddleware } from '@tanstack/react-start'
-import { getRequestHeaders } from '@tanstack/react-start/server'
+import { getRequest } from '@tanstack/react-start/server'
 import { User } from '@a0dotrun/app'
 import type { BetterAuthSession } from './auth-types'
-import { authClient } from '@/lib/auth-client'
+import { auth } from './auth'
+import { env } from '@a0dotrun/app/env'
+
+// export const authMiddleware = createMiddleware().server(async ({ next }) => {
+//   const result = await authClient.getSession({
+//     fetchOptions: {
+//       headers: getRequestHeaders(),
+//     },
+//   })
+//   const session = result.data as BetterAuthSession | null
+//   return await next({
+//     context: {
+//       user: session?.user
+//         ? User.toSession({
+//             ...session.user,
+//             image: session.user.image as string,
+//           })
+//         : null,
+//     },
+//   })
+// })
 
 export const authMiddleware = createMiddleware().server(async ({ next }) => {
-  const result = await authClient.getSession({
-    fetchOptions: {
-      headers: getRequestHeaders(),
+  const session = (await auth(env).api.getSession({
+    headers: getRequest().headers,
+    query: {
+      // Disabling cookie cache will force DB request, we dont want that.
+      // Let's use the cache
+      // https://www.better-auth.com/docs/concepts/session-management#session-caching
+      disableCookieCache: false,
     },
-  })
-  const session = result.data as BetterAuthSession | null
+  })) as BetterAuthSession | null
+
   return await next({
     context: {
-      user: session?.user
+      user: session
         ? User.toSession({
             ...session.user,
             image: session.user.image as string,

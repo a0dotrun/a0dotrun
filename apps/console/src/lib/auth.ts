@@ -111,10 +111,14 @@ export const auth = (env: Env): ReturnType<typeof betterAuth> => {
         },
       }),
       reactStartCookies(),
-    ], // make sure this is the last plugin in the array
+    ],
+    session: {
+      cookieCache: {
+        enabled: true,
+        maxAge: 7 * 24 * 60 * 60, // Cache duration in seconds
+      },
+    },
   })
 }
 
 export type AuthInstance = ReturnType<typeof auth>
-
-// export { auth }

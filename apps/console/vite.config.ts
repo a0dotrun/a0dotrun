@@ -18,6 +18,10 @@ const config = defineConfig({
   optimizeDeps: {
     exclude: ['@google-cloud/cloudbuild', '@google-cloud/storage'],
   },
+  server: {
+    // Allow local development requests from our custom domain
+    allowedHosts: ['consolelocalweb.riverly.tech'],
+  },
   // ssr: {
   //   external: ['@google-cloud/cloudbuild', '@google-cloud/storage'],
   // },

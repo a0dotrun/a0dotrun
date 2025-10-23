@@ -11,8 +11,6 @@
 import { createFileRoute } from '@tanstack/react-router'
 
 import { Route as rootRouteImport } from './routes/__root'
-import { Route as TermsRouteImport } from './routes/terms'
-import { Route as PrivacyRouteImport } from './routes/privacy'
 import { Route as AuthRouteRouteImport } from './routes/_auth/route'
 import { Route as AuthIndexRouteImport } from './routes/_auth/index'
 import { Route as LoginSplatRouteImport } from './routes/login.$'
@@ -63,16 +61,6 @@ const AuthUsernameServersOwnerNameRouteImport = createFileRoute(
   '/_auth/$username/servers/$owner/$name',
 )()
 
-const TermsRoute = TermsRouteImport.update({
-  id: '/terms',
-  path: '/terms',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const PrivacyRoute = PrivacyRouteImport.update({
-  id: '/privacy',
-  path: '/privacy',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const AuthRouteRoute = AuthRouteRouteImport.update({
   id: '/_auth',
   getParentRoute: () => rootRouteImport,
@@ -321,8 +309,6 @@ const AuthUsernameServersOwnerNameServerDeploymentsPreviewRoute =
   } as any)
 
 export interface FileRoutesByFullPath {
-  '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/github/installed': typeof GithubInstalledRoute
   '/login/$': typeof LoginSplatRoute
   '/': typeof AuthIndexRoute
@@ -365,8 +351,6 @@ export interface FileRoutesByFullPath {
   '/$username/servers/$owner/$name/deployments/': typeof AuthUsernameServersOwnerNameServerDeploymentsIndexRoute
 }
 export interface FileRoutesByTo {
-  '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/github/installed': typeof GithubInstalledRoute
   '/login/$': typeof LoginSplatRoute
   '/': typeof AuthIndexRoute
@@ -403,8 +387,6 @@ export interface FileRoutesByTo {
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/_auth': typeof AuthRouteRouteWithChildren
-  '/privacy': typeof PrivacyRoute
-  '/terms': typeof TermsRoute
   '/github/installed': typeof GithubInstalledRoute
   '/login/$': typeof LoginSplatRoute
   '/_auth/': typeof AuthIndexRoute
@@ -452,8 +434,6 @@ export interface FileRoutesById {
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
   fullPaths:
-    | '/privacy'
-    | '/terms'
     | '/github/installed'
     | '/login/$'
     | '/'
@@ -496,8 +476,6 @@ export interface FileRouteTypes {
     | '/$username/servers/$owner/$name/deployments/'
   fileRoutesByTo: FileRoutesByTo
   to:
-    | '/privacy'
-    | '/terms'
     | '/github/installed'
     | '/login/$'
     | '/'
@@ -533,8 +511,6 @@ export interface FileRouteTypes {
   id:
     | '__root__'
     | '/_auth'
-    | '/privacy'
-    | '/terms'
     | '/github/installed'
     | '/login/$'
     | '/_auth/'
@@ -582,8 +558,6 @@ export interface FileRouteTypes {
 }
 export interface RootRouteChildren {
   AuthRouteRoute: typeof AuthRouteRouteWithChildren
-  PrivacyRoute: typeof PrivacyRoute
-  TermsRoute: typeof TermsRoute
   GithubInstalledRoute: typeof GithubInstalledRoute
   LoginSplatRoute: typeof LoginSplatRoute
   ApiAuthSplatRoute: typeof ApiAuthSplatRoute
@@ -596,20 +570,6 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/terms': {
-      id: '/terms'
-      path: '/terms'
-      fullPath: '/terms'
-      preLoaderRoute: typeof TermsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/privacy': {
-      id: '/privacy'
-      path: '/privacy'
-      fullPath: '/privacy'
-      preLoaderRoute: typeof PrivacyRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/_auth': {
       id: '/_auth'
       path: ''
@@ -1157,8 +1117,6 @@ const AuthRouteRouteWithChildren = AuthRouteRoute._addFileChildren(
 
 const rootRouteChildren: RootRouteChildren = {
   AuthRouteRoute: AuthRouteRouteWithChildren,
-  PrivacyRoute: PrivacyRoute,
-  TermsRoute: TermsRoute,
   GithubInstalledRoute: GithubInstalledRoute,
   LoginSplatRoute: LoginSplatRoute,
   ApiAuthSplatRoute: ApiAuthSplatRoute,

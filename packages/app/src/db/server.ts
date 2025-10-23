@@ -7,6 +7,26 @@ import { PgTransaction, type PgTransactionConfig } from "drizzle-orm/pg-core";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
 import { env } from "../env";
 
+function memo<T>(fn: () => T, cleanup?: (value: T) => Promise<void>) {
+  let value: T | undefined;
+  let loaded = false;
+
+  const getter = (): T => {
+    if (loaded) return value as T;
+    value = fn();
+    loaded = true;
+    return value as T;
+  };
+
+  getter.reset = async () => {
+    if (cleanup && value) await cleanup(value);
+    loaded = false;
+    value = undefined;
+  };
+
+  return getter;
+}
+
 namespace Context {
   export class NotFound extends Error {}
 
@@ -33,49 +53,13 @@ export namespace Database {
   >;
 
   const connectionString = env.DATABASE_URL;
-  function createScopedDb() {
-    const raw = postgres(connectionString);
-    const db = drizzle(raw, { casing: "snake_case" });
-    return {
-      db,
-      close: () => raw.end({ timeout: 0 }),
-    };
-  }
+  const client = memo(() => {
+    const result = postgres(connectionString);
+    const db = drizzle(result, { casing: "snake_case" });
+    return db;
+  });
 
-  async function finalizeScope(
-    effects: (() => void | Promise<void>)[],
-    close: () => Promise<void>,
-    errored: boolean
-  ) {
-    const effectResults = await Promise.allSettled(
-      effects.map((effect) => {
-        try {
-          return Promise.resolve(effect());
-        } catch (error) {
-          return Promise.reject(error);
-        }
-      })
-    );
-
-    const closeResult = await Promise.resolve(close())
-      .then(() => ({ status: "fulfilled" as const }))
-      .catch((reason) => ({ status: "rejected" as const, reason }));
-
-    if (errored) return;
-
-    const failedEffect = effectResults.find(
-      (result): result is PromiseRejectedResult => result.status === "rejected"
-    );
-    if (failedEffect) {
-      throw failedEffect.reason;
-    }
-    if (closeResult.status === "rejected") {
-      throw closeResult.reason;
-    }
-  }
-
-  type DrizzleDb = ReturnType<typeof createScopedDb>["db"];
-  export type TxOrDb = Transaction | DrizzleDb;
+  export type TxOrDb = Transaction | ReturnType<typeof client>;
 
   const TransactionContext = Context.create<{
     tx: TxOrDb;
@@ -87,8 +71,17 @@ export namespace Database {
       const { tx } = TransactionContext.use();
       return tx;
     } catch (err) {
-      if (err instanceof Context.NotFound)
-        throw new Error("Database.db() is not available outside request scope");
+      if (err instanceof Context.NotFound) {
+        const effects: (() => void | Promise<void>)[] = [];
+        const result = TransactionContext.provide(
+          {
+            effects,
+            tx: client(),
+          },
+          () => client()
+        );
+        return result;
+      }
       throw err;
     }
   }
@@ -100,22 +93,15 @@ export namespace Database {
     } catch (err) {
       if (err instanceof Context.NotFound) {
         const effects: (() => void | Promise<void>)[] = [];
-        const scope = createScopedDb();
-        let caught: unknown;
-        try {
-          return await TransactionContext.provide(
-            {
-              effects,
-              tx: scope.db,
-            },
-            () => callback(scope.db)
-          );
-        } catch (error) {
-          caught = error;
-          throw error;
-        } finally {
-          await finalizeScope(effects, scope.close, caught !== undefined);
-        }
+        const result = await TransactionContext.provide(
+          {
+            effects,
+            tx: client(),
+          },
+          () => callback(client())
+        );
+        await Promise.all(effects.map((x) => x()));
+        return result;
       }
       throw err;
     }
@@ -146,20 +132,13 @@ export namespace Database {
     } catch (err) {
       if (err instanceof Context.NotFound) {
         const effects: (() => void | Promise<void>)[] = [];
-        const scope = createScopedDb();
-        let caught: unknown;
-        try {
-          return await scope.db.transaction(async (tx) => {
-            return TransactionContext.provide({ tx, effects }, () =>
-              callback(tx)
-            );
-          }, config);
-        } catch (error) {
-          caught = error;
-          throw error;
-        } finally {
-          await finalizeScope(effects, scope.close, caught !== undefined);
-        }
+        const result = await client().transaction(async (tx) => {
+          return TransactionContext.provide({ tx, effects }, () =>
+            callback(tx)
+          );
+        }, config);
+        await Promise.all(effects.map((x) => x()));
+        return result;
       }
       throw err;
     }
