@@ -1,4 +1,4 @@
-import { Link, createFileRoute } from '@tanstack/react-router'
+import { createFileRoute } from '@tanstack/react-router'
 import { GitHubLoginButton } from '@/components/auth/github-login-button'
 
 export const Route = createFileRoute('/login/$')({
@@ -17,11 +17,11 @@ function RouteComponent() {
             <GitHubLoginButton />
             <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t"></div>
           </div>
-          <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
+          {/* <div className="text-muted-foreground *:[a]:hover:text-primary text-center text-xs text-balance *:[a]:underline *:[a]:underline-offset-4">
             By clicking continue, you agree to our{' '}
             <Link to="/terms">Terms of Service</Link> and{' '}
             <Link to="/privacy">Privacy Policy</Link>.
-          </div>
+          </div> */}
         </div>
       </div>
     </div>
