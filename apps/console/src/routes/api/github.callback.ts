@@ -1,6 +1,5 @@
 import { createFileRoute } from '@tanstack/react-router'
 import { GitHub, User } from '@a0dotrun/app'
-import { Database } from '@a0dotrun/app/db'
 import { GitHubInstallationSetupValue } from '@a0dotrun/app/ty'
 import { z } from 'zod'
 import { env } from '@a0dotrun/app/env'
@@ -21,50 +20,49 @@ const callbackSearchSchema = z.object({
 export const Route = createFileRoute('/api/github/callback')({
   server: {
     handlers: {
-      GET: async ({ request }) =>
-        Database.use(async () => {
-          const url = new URL(request.url)
-          const { searchParams } = url
-          const installationId = searchParams.get('installation_id')
-          const setupAction = searchParams.get('setup_action')
+      GET: async ({ request }) => {
+        const url = new URL(request.url)
+        const { searchParams } = url
+        const installationId = searchParams.get('installation_id')
+        const setupAction = searchParams.get('setup_action')
 
-          const parsedParams = {
-            installationId: installationId ? Number(installationId) : undefined,
-            setupAction: setupAction ?? undefined,
+        const parsedParams = {
+          installationId: installationId ? Number(installationId) : undefined,
+          setupAction: setupAction ?? undefined,
+        }
+
+        try {
+          const session = (await auth.api.getSession({
+            headers: request.headers,
+          })) as BetterAuthSession | null
+
+          if (!session) {
+            return Response.redirect(new URL('/login', request.url))
           }
 
-          try {
-            const session = (await auth.api.getSession({
-              headers: request.headers,
-            })) as BetterAuthSession | null
+          const sessionUser = User.toSession(session.user as UserTable)
 
-            if (!session) {
-              return Response.redirect(new URL('/login', request.url))
-            }
+          const validatedParams = callbackSearchSchema.parse(parsedParams)
+          const installationDetails = await GitHub.installationDetails(
+            validatedParams.installationId,
+          )
 
-            const sessionUser = User.toSession(session.user as UserTable)
+          await GitHub.upsertApp({
+            userId: sessionUser.userId,
+            githubAppId: env.GITHUB_APP_ID,
+            githubInstallationId: validatedParams.installationId,
+            setupAction: validatedParams.setupAction,
+            accountId: installationDetails.accountId,
+            accountType: installationDetails.accountType,
+            accountLogin: installationDetails.accountLogin,
+          })
 
-            const validatedParams = callbackSearchSchema.parse(parsedParams)
-            const installationDetails = await GitHub.installationDetails(
-              validatedParams.installationId,
-            )
-
-            await GitHub.upsertApp({
-              userId: sessionUser.userId,
-              githubAppId: env.GITHUB_APP_ID,
-              githubInstallationId: validatedParams.installationId,
-              setupAction: validatedParams.setupAction,
-              accountId: installationDetails.accountId,
-              accountType: installationDetails.accountType,
-              accountLogin: installationDetails.accountLogin,
-            })
-
-            return Response.redirect(new URL('/github/installed', request.url))
-          } catch (err) {
-            console.error(err)
-            return new Response('Bad Request', { status: 400 })
-          }
-        }),
+          return Response.redirect(new URL('/github/installed', request.url))
+        } catch (err) {
+          console.error(err)
+          return new Response('Bad Request', { status: 400 })
+        }
+      },
     },
   },
 })

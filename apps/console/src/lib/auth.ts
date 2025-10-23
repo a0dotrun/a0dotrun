@@ -64,7 +64,7 @@ export const authConfig = {
 
 const auth: ReturnType<typeof betterAuth> = betterAuth({
   ...authConfig,
-  database: drizzleAdapter(Database.raw(), {
+  database: drizzleAdapter(Database.db(), {
     provider: 'pg',
     schema: {
       user: users,

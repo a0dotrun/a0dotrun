@@ -10,7 +10,7 @@ import {
   jwks,
   UserType,
 } from "@a0dotrun/app/db/schema";
-import { env } from "@a0dotrun/app/env"
+import { env } from "@a0dotrun/app/env";
 
 export const authConfig = {
   emailAndPassword: {
@@ -61,7 +61,7 @@ export const authConfig = {
 
 const auth: ReturnType<typeof betterAuth> = betterAuth({
   ...authConfig,
-  database: drizzleAdapter(Database.raw(), {
+  database: drizzleAdapter(Database.db(), {
     provider: "pg",
     schema: {
       user: users,

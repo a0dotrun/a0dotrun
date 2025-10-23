@@ -2,11 +2,7 @@ import "dotenv/config";
 import { AsyncLocalStorage } from "node:async_hooks";
 import { drizzle } from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import type {
-  PostgresJsDatabase,
-  PostgresJsPreparedQuery,
-  PostgresJsQueryResultHKT,
-} from "drizzle-orm/postgres-js";
+import type { PostgresJsQueryResultHKT } from "drizzle-orm/postgres-js";
 import { PgTransaction, type PgTransactionConfig } from "drizzle-orm/pg-core";
 import type { ExtractTablesWithRelations } from "drizzle-orm";
 
@@ -69,8 +65,24 @@ export namespace Database {
     effects: (() => void | Promise<void>)[];
   }>();
 
-  export function raw() {
-    return client();
+  export function db() {
+    try {
+      const { tx } = TransactionContext.use();
+      return tx;
+    } catch (err) {
+      if (err instanceof Context.NotFound) {
+        const effects: (() => void | Promise<void>)[] = [];
+        const result = TransactionContext.provide(
+          {
+            effects,
+            tx: client(),
+          },
+          () => client()
+        );
+        return result;
+      }
+      throw err;
+    }
   }
 
   export async function use<T>(callback: (trx: TxOrDb) => Promise<T>) {
