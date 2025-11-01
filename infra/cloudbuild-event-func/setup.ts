@@ -27,8 +27,19 @@ const targetWebhook =
   config.get("targetWebhook") ??
   "https://localapi.riverly.tech/__/v1/deployments/gcp/events";
 const targetWebhookUsername = config.get("targetWebhookUsername") ?? "a0runner";
+const targetWebhookPasswordFromConfig = config.getSecret(
+  "targetWebhookPassword"
+);
+const targetWebhookPasswordEnv = process.env.TARGET_DEPLOYMENT_WEBHOOK_PASSWORD;
+
+if (!targetWebhookPasswordFromConfig && !targetWebhookPasswordEnv) {
+  throw new Error(
+    "Missing deployment webhook credentials. Set Pulumi config 'cloudbuild:targetWebhookPassword' (preferably with --secret) or export TARGET_DEPLOYMENT_WEBHOOK_PASSWORD."
+  );
+}
+
 const targetWebhookPassword =
-  config.getSecret("targetWebhookPassword") ?? pulumi.secret("VeryS3Cure");
+  targetWebhookPasswordFromConfig ?? pulumi.secret(targetWebhookPasswordEnv!);
 const cloudBuildTopicName = config.get("cloudBuildTopic") ?? "cloud-builds";
 
 const requiredServices = [
@@ -55,7 +66,7 @@ const enabledServices = requiredServices.map(
     )
 );
 
-const functionSourceDir = path.resolve(__dirname, "cloudbuild-event-func");
+const functionSourceDir = path.resolve(__dirname, "function");
 
 if (!fs.existsSync(functionSourceDir)) {
   throw new Error(
@@ -100,7 +111,9 @@ const compiledSource = (() => {
       return pulumi.output(code);
     } catch (error) {
       throw new Error(
-        `Bun failed to transpile Cloud Function source: ${(error as Error).message}`
+        `Bun failed to transpile Cloud Function source: ${
+          (error as Error).message
+        }`
       );
     }
   }

@@ -8,8 +8,5 @@
     "resolveJsonModule": true,
     "skipLibCheck": true
   },
-  "include": [
-    "setup.ts",
-    "cloudbuild-event-func/**/*.ts"
-  ]
+  "include": ["setup.ts", "function/**/*.ts"]
 }

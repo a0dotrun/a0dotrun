@@ -1,0 +1,10 @@
+{
+  "name": "function",
+  "private": true,
+  "version": "0.0.0",
+  "main": "./index.js",
+  "type": "commonjs",
+  "devDependencies": {
+    "@types/node": "^20.0.0"
+  }
+}
