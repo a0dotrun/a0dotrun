@@ -4,9 +4,9 @@
   "type": "module",
   "scripts": {
     "dev": "vite dev --port 3000",
-    "preview": "vite preview",
+    "preview": "bun run build && vite preview",
     "build": "vite build --mode production && tsc --noEmit",
-    "deploy": "vite build && wrangler deploy",
+    "deploy": "bun run build && wrangler deploy",
     "cf-typegen": "wrangler types",
     "test": "vitest run",
     "lint": "eslint .",
@@ -15,7 +15,6 @@
     "check": "prettier --write . && eslint --fix ."
   },
   "dependencies": {
-    "@riverly/app": "workspace:*",
     "@electric-sql/client": "^1.0.14",
     "@electric-sql/react": "^1.0.14",
     "@fontsource/ibm-plex-mono": "^5.2.7",
@@ -35,6 +34,7 @@
     "@radix-ui/react-switch": "^1.2.6",
     "@radix-ui/react-tabs": "^1.1.13",
     "@radix-ui/react-tooltip": "^1.2.8",
+    "@riverly/app": "workspace:*",
     "@t3-oss/env-core": "catalog:",
     "@tailwindcss/postcss": "^4.1.15",
     "@tailwindcss/vite": "^4.1.15",
@@ -78,7 +78,7 @@
     "zod": "^4.1.12"
   },
   "devDependencies": {
-    "@cloudflare/vite-plugin": "^1.13.14",
+    "@cloudflare/vite-plugin": "^1.13.18",
     "@tailwindcss/typography": "^0.5.19",
     "@tanstack/eslint-config": "^0.3.2",
     "@testing-library/dom": "^10.4.1",
@@ -87,13 +87,13 @@
     "@types/react": "^19.2.2",
     "@types/react-dom": "^19.2.2",
     "@vitejs/plugin-react": "^5.0.4",
+    "eslint": "^9.38.0",
     "jsdom": "^27.0.1",
     "prettier": "^3.6.2",
     "typescript": "^5.9.3",
     "vite": "^7.1.11",
     "vitest": "^3.2.4",
     "web-vitals": "^5.1.0",
-    "wrangler": "^4.44.0",
-    "eslint": "^9.38.0"
+    "wrangler": "^4.45.3"
   }
 }
