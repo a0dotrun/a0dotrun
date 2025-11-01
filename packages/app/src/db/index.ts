@@ -37,8 +37,13 @@ export namespace Database {
   // This function creates a new database connection for each request.
   // This is ideal for serverless environments like Cloudflare Workers
   // where functions are short-lived.
+  // Connection options keep the pool to a single client and disable prepared statements.
   function createScopedDb() {
-    const raw = postgres(connectionString);
+    const raw = postgres(connectionString, {
+      max: 1,
+      idle_timeout: 0,
+      prepare: false,
+    });
     const db = drizzle(raw, { casing: "snake_case" });
     return {
       db,
@@ -65,17 +70,24 @@ export namespace Database {
       .then(() => ({ status: "fulfilled" as const }))
       .catch((reason) => ({ status: "rejected" as const, reason }));
 
-    if (errored) return;
-
-    const failedEffect = effectResults.find(
+    const failedEffects = effectResults.filter(
       (result): result is PromiseRejectedResult => result.status === "rejected"
     );
-    if (failedEffect) {
-      throw failedEffect.reason;
+    const cleanupErrors = [
+      ...failedEffects.map((result) => result.reason),
+      ...(closeResult.status === "rejected" ? [closeResult.reason] : []),
+    ];
+
+    if (cleanupErrors.length === 0) return;
+
+    if (errored) {
+      cleanupErrors.forEach((error) => {
+        console.error("Database scope cleanup failed after request error:", error);
+      });
+      return;
     }
-    if (closeResult.status === "rejected") {
-      throw closeResult.reason;
-    }
+
+    throw cleanupErrors[0];
   }
 
   type DrizzleDb = ReturnType<typeof createScopedDb>["db"];
