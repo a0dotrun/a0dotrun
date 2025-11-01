@@ -1,5 +1,5 @@
 {
-  "name": "@repo/platform-cloudbuild",
+  "name": "@infra/platform-cloudbuild",
   "private": true,
   "type": "commonjs"
 }

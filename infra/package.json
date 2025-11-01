@@ -1,5 +1,5 @@
 {
-  "name": "platform",
+  "name": "infra",
   "module": "index.ts",
   "type": "module",
   "private": true,
