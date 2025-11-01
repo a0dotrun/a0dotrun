@@ -1,4 +1,4 @@
-import { Database } from "../db";
+import { Database } from "@riverly/app/db";
 import { eq } from "drizzle-orm";
 import { users, SelectUser, UpdateUser } from "../db/schema";
 import { fn } from "@riverly/utils";

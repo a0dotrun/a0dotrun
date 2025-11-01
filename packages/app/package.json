@@ -6,7 +6,11 @@
     ".": "./src/index.ts",
     "./ty": "./src/ty/index.ts",
     "./env": "./src/env.ts",
-    "./db": "./src/db/index.ts",
+    "./db": {
+      "worker": "./src/db/db.serverless.ts",
+      "node": "./src/db/db.node.ts",
+      "default": "./src/db/db.node.ts"
+    },
     "./db/schema": "./src/db/schema/index.ts",
     "./infra": "./src/infra/index.ts",
     "./infra/providers/gcp": "./src/infra/providers/gcp/index.ts"

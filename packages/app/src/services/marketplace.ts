@@ -1,6 +1,6 @@
 import { fn } from "@riverly/utils";
 import { and, count, desc, eq, gt } from "drizzle-orm";
-import { Database } from "../db";
+import { Database } from "@riverly/app/db";
 import { serverInstallTable, serverTable, serverViewTable } from "../db/schema";
 import z from "zod/v4";
 

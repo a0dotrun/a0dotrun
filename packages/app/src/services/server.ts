@@ -4,7 +4,7 @@ import { and, desc, eq, or, sql } from "drizzle-orm";
 import { ulid } from "ulid";
 import z from "zod/v4";
 import { env } from "../env";
-import { Database } from "../db";
+import { Database } from "@riverly/app/db";
 import { defaultAvatarUrl, parseRepoUrl } from "./helpers";
 import {
   AddServer,

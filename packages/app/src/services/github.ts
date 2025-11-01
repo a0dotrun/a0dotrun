@@ -3,7 +3,7 @@ import { and, asc, eq, sql } from "drizzle-orm";
 import { nanoid } from "nanoid";
 import { App as GhApp } from "octokit";
 import z from "zod/v4";
-import { Database } from "../db";
+import { Database } from "@riverly/app/db";
 import { type GitHubAccountType, gitHubInstallationTable } from "../db/schema";
 import { GitHubInstallationSetup } from "../ty";
 import { type ServerReadme } from "../ty";

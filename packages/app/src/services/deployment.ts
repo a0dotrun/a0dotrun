@@ -1,6 +1,6 @@
 import { and, desc, eq, or } from "drizzle-orm";
 import z from "zod/v4";
-import { Database } from "../db";
+import { Database } from "@riverly/app/db";
 import {
   buildTable,
   InsertDeploymentLog,
