@@ -53,6 +53,10 @@ export namespace Database {
   >;
 
   const connectionString = env.DATABASE_URL;
+
+  // This uses a memoized, singleton pattern to create a single,
+  // persistent database connection that is reused for all requests.
+  // This is ideal for traditional, long-running server processes.
   const client = memo(() => {
     const result = postgres(connectionString);
     const db = drizzle(result, { casing: "snake_case" });

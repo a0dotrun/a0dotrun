@@ -33,6 +33,10 @@ export namespace Database {
   >;
 
   const connectionString = env.DATABASE_URL;
+
+  // This function creates a new database connection for each request.
+  // This is ideal for serverless environments like Cloudflare Workers
+  // where functions are short-lived.
   function createScopedDb() {
     const raw = postgres(connectionString);
     const db = drizzle(raw, { casing: "snake_case" });
